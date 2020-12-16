@@ -46,14 +46,14 @@ const start = async(aksa = new Client()) => {
     console.log('------------------------------------------------')
     console.log('[DEV] AKSARA')
     console.log('[SERVER] LUCYAV2 IS ONLINE!')
-    aksa.onAnyMessage((fn) => messageLog(fn.fromMe, fn.type))
+        //aksa.onAnyMessage((fn) => messageLog(fn.fromMe, fn.type))
         // Force it to keep the current session
     aksa.onStateChanged((state) => {
             console.log('[Client State]', state)
             if (state === 'CONFLICT' || state === 'UNLAUNCHED') aksa.forceRefocus()
         })
         // listening on message
-    aksa.onMessage((async(message) => {
+    aksa.onAnyMessage((async(message) => {
 
         aksa.getAmountOfLoadedMessages() // Cut message Cache if cache more than 3K
             .then((msg) => {
