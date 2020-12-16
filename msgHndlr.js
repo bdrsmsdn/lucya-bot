@@ -947,17 +947,17 @@ Contoh: ${prefix}setprefix #`, id)
                     //primary menu-----------------------------------------------------------------------------------------------
 
                 case `${prefix}regis`: //AKSARA 
-                    if (isRegis) return tobz.reply(dari, 'Anda sudah melakukan registrasi!', id)
-                    if (args === 1) return tobz.reply(dari, `Silakan isi dengan nama dan nomor telepon! Contoh: !regis |${pushname}|${serial.replace(/@c.us/g,'')}`, id)
+                    if (isRegis) return aksa.reply(dari, 'Anda sudah melakukan registrasi!', id)
+                    if (args === 1) return aksa.reply(dari, `Silakan isi dengan nama dan nomor telepon! Contoh: !regis |${pushname}|${serial.replace(/@c.us/g,'')}`, id)
                     arg = body.trim().split('|')
                     const nimi = arg[1]
                     const nimir = arg[2]
                     const texts = nimir.replace(/[-\s+]/g, '') + '@c.us'
                     var cek = regis.includes(texts);
                     if (cek) {
-                        return tobz.reply(dari, 'Nomor sudah ada di database', id) //if number already exists on database
+                        return aksa.reply(dari, 'Nomor sudah ada di database', id) //if number already exists on database
                     } else {
-                        const mentahh = await tobz.checkNumberStatus(texts) //VALIDATE WHATSAPP NUMBER
+                        const mentahh = await aksa.checkNumberStatus(texts) //VALIDATE WHATSAPP NUMBER
                         const hasilll = mentahh.canReceiveMessage ? `
 ╭───「 *REGISTRASI* 」───
 │++
@@ -972,10 +972,10 @@ Total user terdaftar : ${regis.length}
           ║▌│█║▌│ █║▌│█│║▌║
           
                            *_AKSARA_*` : false
-                        if (!hasilll) return tobz.reply(dari, 'Nomor WhatsApp tidak valid [ Tidak terdaftar di WhatsApp ] atau gunakan 62 di awal bukan 0', id)
+                        if (!hasilll) return aksa.reply(dari, 'Nomor WhatsApp tidak valid [ Tidak terdaftar di WhatsApp ] atau gunakan 62 di awal bukan 0', id)
                         regis.push(mentahh.id._serialized)
                         fs.writeFileSync('./lib/regis.json', JSON.stringify(regis))
-                        tobz.sendText(dari, hasilll)
+                        aksa.sendText(dari, hasilll)
                     }
                     break
                 case `${prefix}unreg`: //menghapus nomor dari database
