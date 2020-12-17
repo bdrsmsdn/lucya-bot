@@ -31,6 +31,7 @@ Open ./lib/functions.js edit vhtear with your VHTEARKEY
 - [TRAKTEER](https://trakteer.id/bdrsmsdn)
 - [OVO/DANA/GOPAY](081281817375)
 - [BCA](8480792000) an Badra Samsudin Ramdan N
+
 Jangan lupa follow instagramku yaa! https://instagram.com/bdrsmsdn
 
 ## Getting Started
@@ -51,6 +52,10 @@ Install the dependencies:
 > npm install
 > npm install -g pm2
 ```
+
+### How to Install FFMPEG
+Just check Tobz Github XD
+- [TobyG74](https://github.com/TobyG74/ElainaBOT)
 
 ### Usage
 1. run the Whatsapp bot
@@ -171,6 +176,8 @@ after running it you need to scan the qr
 |       ✅        |   Get Music                 |
 |       ✅        |   Video                 |
 |       ✅        |   Get Video                 |
+|       ✅        |   Convert Video to Mp3                 |
+|       ✅        |   Distord an audio                 |
 |       and       |   Others...                 |
 
 | NSFW Commands |              Feature                |

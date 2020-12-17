@@ -7,6 +7,8 @@
     Seluruh pemilik web penyedia layanan API 
 */
 
+//--------------------------------------------------COPY YANG BENER---------------------------------------------------------------------------
+
 const {
     decryptMedia
 } = require('@open-wa/wa-decrypt')
