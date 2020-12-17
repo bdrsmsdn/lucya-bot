@@ -2,7 +2,7 @@
     Special Thanks to:
     Allah SWT
     Mhankbarbar
-    Tobz
+    aksa
     Seluruh creator bot yang ada di Group BOT WE A
     Seluruh pemilik web penyedia layanan API 
 */
@@ -581,12 +581,12 @@ module.exports = msgHndlr = async (aksa, message) => {
             aksa.reply(dari, `sama-sama ${pushname}💖`, id)
         }
         if (body === `${prefix}public`) {
-                if (!isOwner) return tobz.reply(dari, 'Maaf, perintah ini hanya dapat dilakukan oleh Owner Self Bot!', id)
+                if (!isOwner) return aksa.reply(dari, 'Maaf, perintah ini hanya dapat dilakukan oleh Owner Lucya!', id)
                 if (setting.banChats === false) return
                 setting.banChats = false
                 banChats = false
                 fs.writeFileSync('./lib/setting.json', JSON.stringify(setting, null, 2))
-                tobz.reply(dari, '*PUBLIC MODE*', id)
+                aksa.reply(dari, '*PUBLIC MODE*', id)
             }
         }
 
@@ -615,11 +615,11 @@ module.exports = msgHndlr = async (aksa, message) => {
                 //owner menu----------------------------------------------------------------------------------------------------------------------------
                 case `${prefix}self`:
                     if (setting.banChats === true) return
-                    if (!isOwner) return tobz.reply(dari, 'Perintah ini hanya bisa di gunakan oleh Owner Self Bot!', id)
+                    if (!isOwner) return aksa.reply(dari, 'Perintah ini hanya bisa di gunakan oleh Owner Lucya!', id)
                     setting.banChats = true
                     banChats = true
                     fs.writeFileSync('./lib/setting.json', JSON.stringify(setting, null, 2))
-                    tobz.reply(dari, '*SELF MODE*', id)
+                    aksa.reply(dari, '*SELF MODE*', id)
                     break
                 case `prefix`:
                     aksa.reply(dari, `*Lucya is Use ( ${prefix} ) Prefix!.* 
@@ -834,7 +834,7 @@ Contoh: ${prefix}setprefix #`, id)
                     }
                     await aksa.reply(dari, lbw, id)
                     break
-                case `${prefix}bc`: // TERIMA KASIH TOBZ BAIK HATI DAN TIDAK SOMBONG
+                case `${prefix}bc`: // TERIMA KASIH aksa BAIK HATI DAN TIDAK SOMBONG
                     if (!isOwner) return aksa.reply(dari, `Perintah ini hanya untuk Owner Lucya`, id)
                     bctxt = body.slice(4)
                     txtbc = `
@@ -2279,7 +2279,7 @@ ${Object.keys(me.phone).map(key => `${key} : ${me.phone[key]}`).join('\n')}`.sli
                     console.log(slicedArgs)
                     const spam = await slicedArgs.join(' ')
                     console.log(spam)
-                    const call2 = await axios.get('https://tobz-api.herokuapp.com/api/spamcall?no=' + spam)
+                    const call2 = await axios.get('https://aksa-api.herokuapp.com/api/spamcall?no=' + spam)
                     const {
                         logs
                     } = call2.data
@@ -2603,7 +2603,7 @@ ${Object.keys(me.phone).map(key => `${key} : ${me.phone[key]}`).join('\n')}`.sli
                     if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik !limit Untuk Mengecek Kuota Limit Kamu`, id)
 
                     await limitAdd(serial)
-                    const quotez2 = await axios.get('https://tobz-api.herokuapp.com/api/randomquotes')
+                    const quotez2 = await axios.get('https://aksa-api.herokuapp.com/api/randomquotes')
                     aksa.reply(dari, `➸ *Quotes* : ${quotez2.data.quotes}\n➸ *Author* : ${quotez2.data.author}`, id)
                     break
                 case `${prefix}renungan`:
@@ -2652,7 +2652,7 @@ ${Object.keys(me.phone).map(key => `${key} : ${me.phone[key]}`).join('\n')}`.sli
                     if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik !limit Untuk Mengecek Kuota Limit Kamu`, id)
 
                     await limitAdd(serial)
-                    if (args.length === 1) return aksa.reply(dari, 'Kirim perintah *!artinama [query]*\nContoh : *!artinama tobz*', id)
+                    if (args.length === 1) return aksa.reply(dari, 'Kirim perintah *!artinama [query]*\nContoh : *!artinama aksa*', id)
                     try {
                         const resp = await axios.get('https://api.vhtear.com/artinama?nama=' + body.slice(9) + '&apikey=' + vhtear)
                         if (resp.data.error) return aksa.reply(dari, resp.data.error, id)
@@ -3274,7 +3274,7 @@ ${Object.keys(me.phone).map(key => `${key} : ${me.phone[key]}`).join('\n')}`.sli
                     await limitAdd(serial)
                     if (args.length === 1) return aksa.reply(dari, `Untuk menggunakan !kpop\nSilahkan ketik: !kpop [query]\nContoh: !kpop bts\n\nquery yang tersedia:\nblackpink, exo, bts`, id)
                     if (args[1] === 'blackpink' || args[1] === 'exo' || args[1] === 'bts') {
-                        fetch('https://raw.githubusercontent.com/tobzZ/grabbed-results/main/random/kpop/' + args[1] + '.txt')
+                        fetch('https://raw.githubusercontent.com/aksaZ/grabbed-results/main/random/kpop/' + args[1] + '.txt')
                             .then(res => res.text())
                             .then(body => {
                                 let randomkpop = body.split('\n')
@@ -3514,7 +3514,7 @@ ${Object.keys(me.phone).map(key => `${key} : ${me.phone[key]}`).join('\n')}`.sli
                     if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik @limit Untuk Mengecek Kuota Limit Kamu`, id)
 
                     await limitAdd(serial)
-                    const trapnime = await axios.get('https://tobz-api.herokuapp.com/api/nsfwtrap')
+                    const trapnime = await axios.get('https://aksa-api.herokuapp.com/api/nsfwtrap')
                     const trapn = trapnime.data.result
                     if (trapn.result.endsWith('.png')) {
                         var ext = '.png'
@@ -3529,7 +3529,7 @@ ${Object.keys(me.phone).map(key => `${key} : ${me.phone[key]}`).join('\n')}`.sli
                     if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik @limit Untuk Mengecek Kuota Limit Kamu`, id)
 
                     await limitAdd(serial)
-                    const hentai = await axios.get(`https://tobz-api.herokuapp.com/api/hentai`)
+                    const hentai = await axios.get(`https://aksa-api.herokuapp.com/api/hentai`)
                     const henta = hentai.data
                     if (henta.result.endsWith('.png')) {
                         var ext = '.png'
@@ -3544,7 +3544,7 @@ ${Object.keys(me.phone).map(key => `${key} : ${me.phone[key]}`).join('\n')}`.sli
                     if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik @limit Untuk Mengecek Kuota Limit Kamu`, id)
 
                     await limitAdd(serial)
-                    const nsfwneko = await axios.get('https://tobz-api.herokuapp.com/api/nsfwneko')
+                    const nsfwneko = await axios.get('https://aksa-api.herokuapp.com/api/nsfwneko')
                     const nsfwn = nsfwneko.data
                     if (nsfwn.result.endsWith('.png')) {
                         var ext = '.png'
@@ -3730,19 +3730,19 @@ ${Object.keys(me.phone).map(key => `${key} : ${me.phone[key]}`).join('\n')}`.sli
                     //yang ngerasa punya ini bilang jir gue lupa dari siapa
                 case `${prefix}pollresult`:
                     if (!isRegis) return aksa.reply(dari, `Maaf ${pushname}, sepertinya kamu belum terdaftar sebagai user Lucya, untuk pendaftaran bisa menggunakan *!regis* |nama|no hp. Contoh: !regis |${pushname}|${serial.replace(/@c.us/g,'')}`, id)
-                    feature.getpoll(tobz, message, pollfile, voterslistfile)
+                    feature.getpoll(aksa, message, pollfile, voterslistfile)
                     break
                 case `${prefix}vote`:
                     if (!isRegis) return aksa.reply(dari, `Maaf ${pushname}, sepertinya kamu belum terdaftar sebagai user Lucya, untuk pendaftaran bisa menggunakan *!regis* |nama|no hp. Contoh: !regis |${pushname}|${serial.replace(/@c.us/g,'')}`, id)
-                    feature.voteadapter(tobz, message, pollfile, voterslistfile)
+                    feature.voteadapter(aksa, message, pollfile, voterslistfile)
                     break
                 case `${prefix}addpoll`:
                     if (!isRegis) return aksa.reply(dari, `Maaf ${pushname}, sepertinya kamu belum terdaftar sebagai user Lucya, untuk pendaftaran bisa menggunakan *!regis* |nama|no hp. Contoh: !regis |${pushname}|${serial.replace(/@c.us/g,'')}`, id)
-                    feature.adminpollreset(tobz, message, message.body.slice(9), pollfile, voterslistfile)
+                    feature.adminpollreset(aksa, message, message.body.slice(9), pollfile, voterslistfile)
                     break
                 case `${prefix}addv`:
                     if (!isRegis) return aksa.reply(dari, `Maaf ${pushname}, sepertinya kamu belum terdaftar sebagai user Lucya, untuk pendaftaran bisa menggunakan *!regis* |nama|no hp. Contoh: !regis |${pushname}|${serial.replace(/@c.us/g,'')}`, id)
-                    feature.addcandidate(tobz, message, message.body.slice(6), pollfile, voterslistfile)
+                    feature.addcandidate(aksa, message, message.body.slice(6), pollfile, voterslistfile)
                     break
 
                     //anonymouschat menu---------------------------------------------------------------------------------------------------------------------------------
@@ -4677,7 +4677,7 @@ Twitter: https://twitter.com/bdrsmsdn`)
                 if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik #limit Untuk Mengecek Kuota Limit Kamu`, id)
 
                 await limitAdd(serial)
-                const bmkg = await axios.get('http://tobz-api.herokuapp.com/api/infogempa')
+                const bmkg = await axios.get('http://aksa-api.herokuapp.com/api/infogempa')
                 const {
                     potensi, koordinat, lokasi, kedalaman, magnitude, waktu, map
                 } = bmkg.data
