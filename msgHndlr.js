@@ -975,7 +975,7 @@ Total user terdaftar : ${regis.length}
                            *_AKSARA_*` : false
                         if (!hasilll) return aksa.reply(dari, 'Nomor WhatsApp tidak valid [ Tidak terdaftar di WhatsApp ] atau gunakan 62 di awal bukan 0', id)
                         regis.push(mentahh.id._serialized)
-                        fs.writeFileSync('./lib/regis.json', JSON.stringify(regis))
+                        fs.writeFileSync('./lib/data/regis.json', JSON.stringify(regis))
                         aksa.sendText(dari, hasilll)
                     }
                     break
