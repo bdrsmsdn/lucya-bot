@@ -578,13 +578,14 @@ module.exports = msgHndlr = async (aksa, message) => {
         if (args.includes('terima kasih') || args.includes('makasih') || args.includes('terimakasih') || args.includes('thank you') || args.includes('thanks')) {
             aksa.reply(dari, `sama-sama ${pushname}💖`, id)
         }
-        if (body === `${prefix}unbanchat`) {
-            if (!isOwner) return aksa.reply(dari, 'Maaf, perintah ini hanya dapat dilakukan oleh Owner Lucya!', id)
-            if (setting.banChats === false) return
-            setting.banChats = false
-            banChats = false
-            fs.writeFileSync('./lib/setting.json', JSON.stringify(setting, null, 2))
-            aksa.reply(dari, 'Global chat has been disable!', id)
+        if (body === `${prefix}public`) {
+                if (!isOwner) return tobz.reply(dari, 'Maaf, perintah ini hanya dapat dilakukan oleh Owner Self Bot!', id)
+                if (setting.banChats === false) return
+                setting.banChats = false
+                banChats = false
+                fs.writeFileSync('./lib/setting.json', JSON.stringify(setting, null, 2))
+                tobz.reply(dari, '*PUBLIC MODE*', id)
+            }
         }
 
         // [BETA] Avoid Spam Message
@@ -610,13 +611,13 @@ module.exports = msgHndlr = async (aksa, message) => {
         if (isMuted(chatId) && banChat() && !isBlocked && !isBanned || isOwner) {
             switch (command) {
                 //owner menu----------------------------------------------------------------------------------------------------------------------------
-                case `${prefix}banchat`:
+                case `${prefix}self`:
                     if (setting.banChats === true) return
-                    if (!isOwner) return aksa.reply(dari, 'Perintah ini hanya bisa di gunakan oleh Owner Lucya!', id)
+                    if (!isOwner) return tobz.reply(dari, 'Perintah ini hanya bisa di gunakan oleh Owner Self Bot!', id)
                     setting.banChats = true
                     banChats = true
                     fs.writeFileSync('./lib/setting.json', JSON.stringify(setting, null, 2))
-                    aksa.reply(dari, 'Global chat has been enable!', id)
+                    tobz.reply(dari, '*SELF MODE*', id)
                     break
                 case `prefix`:
                     aksa.reply(dari, `*Lucya is Use ( ${prefix} ) Prefix!.* 
@@ -3774,7 +3775,7 @@ ${Object.keys(me.phone).map(key => `${key} : ${me.phone[key]}`).join('\n')}`.sli
                     }
 
                     break
-                case `${prefix}daftar`: { //menambahkan nomor ke database 
+                case `${prefix}daftar`: //menambahkan nomor ke database 
                     if (!isRegis) return aksa.reply(dari, `Maaf ${pushname}, sepertinya kamu belum terdaftar sebagai user Lucya, untuk pendaftaran bisa menggunakan *!regis* |nama|no hp. Contoh: !regis |${pushname}|${serial.replace(/@c.us/g,'')}`, id)
                     if (isGroupMsg) return aksa.reply(dari, 'Perintah ini hanya bisa dilakukan di chat personal!', id)
                     if (args.length === 1) return aksa.reply(dari, 'Nomornya mana kak?\ncontoh: !daftar 6281281817375')
@@ -3785,17 +3786,19 @@ ${Object.keys(me.phone).map(key => `${key} : ${me.phone[key]}`).join('\n')}`.sli
                     } else {
                         const mentah = await aksa.checkNumberStatus(text) //VALIDATE WHATSAPP NUMBER
                         const hasill = mentah.canReceiveMessage ? `Sukses menambahkan nomer ke database\nTotal data nomer sekarang : *${pengirim.length}*` : false
-                        if (!hasill) return aksa.reply(dari, 'Nomor WhatsApp tidak valid [ Tidak terdaftar di WhatsApp ] atau gunakan 62 di awal bukan 0', id) {
+                        if (!hasill) return aksa.reply(dari, 'Nomor WhatsApp tidak valid [ Tidak terdaftar di WhatsApp ] atau gunakan 62 di awal bukan 0', id) 
+                        {
                             pengirim.push(mentah.id._serialized)
                             fs.writeFileSync('./lib/user.json', JSON.stringify(pengirim))
                             aksa.sendText(dari, hasill)
                         }
                     }
-                }
+                
                 break
             case `${prefix}remove`: //menghapus nomor from database
                 if (!isOwner) return aksa.reply(dari, 'Fitur ini hanya dapat digunakan oleh Owner Lucya')
-                if (args.length === 1) return aksa.reply(dari, 'Masukkan nomornya, *GUNAKAN AWALAN 62* contoh: 6281281817375') {
+                if (args.length === 1) return aksa.reply(dari, 'Masukkan nomornya, *GUNAKAN AWALAN 62* contoh: 6281281817375') 
+                {
                     let inx = pengirim.indexOf(args[1] + '@c.us')
                     pengirim.splice(inx, 1)
                     fs.writeFileSync('./lib/user.json', JSON.stringify(pengirim))
