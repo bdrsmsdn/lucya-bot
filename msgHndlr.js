@@ -581,13 +581,13 @@ module.exports = msgHndlr = async (aksa, message) => {
             aksa.reply(dari, `sama-sama ${pushname}💖`, id)
         }
         if (body === `${prefix}public`) {
-                if (!isOwner) return aksa.reply(dari, 'Maaf, perintah ini hanya dapat dilakukan oleh Owner Lucya!', id)
-                if (setting.banChats === false) return
-                setting.banChats = false
-                banChats = false
-                fs.writeFileSync('./lib/setting.json', JSON.stringify(setting, null, 2))
-                aksa.reply(dari, '*PUBLIC MODE*', id)
-            }
+            if (!isOwner) return aksa.reply(dari, 'Maaf, perintah ini hanya dapat dilakukan oleh Owner Lucya!', id)
+            if (setting.banChats === false) return
+            setting.banChats = false
+            banChats = false
+            fs.writeFileSync('./lib/setting.json', JSON.stringify(setting, null, 2))
+            aksa.reply(dari, '*PUBLIC MODE*', id)
+
         }
 
         // [BETA] Avoid Spam Message
@@ -3788,430 +3788,428 @@ ${Object.keys(me.phone).map(key => `${key} : ${me.phone[key]}`).join('\n')}`.sli
                     } else {
                         const mentah = await aksa.checkNumberStatus(text) //VALIDATE WHATSAPP NUMBER
                         const hasill = mentah.canReceiveMessage ? `Sukses menambahkan nomer ke database\nTotal data nomer sekarang : *${pengirim.length}*` : false
-                        if (!hasill) return aksa.reply(dari, 'Nomor WhatsApp tidak valid [ Tidak terdaftar di WhatsApp ] atau gunakan 62 di awal bukan 0', id) 
-                        {
+                        if (!hasill) return aksa.reply(dari, 'Nomor WhatsApp tidak valid [ Tidak terdaftar di WhatsApp ] atau gunakan 62 di awal bukan 0', id) {
                             pengirim.push(mentah.id._serialized)
                             fs.writeFileSync('./lib/user.json', JSON.stringify(pengirim))
                             aksa.sendText(dari, hasill)
                         }
                     }
-                
-                break
-            case `${prefix}remove`: //menghapus nomor from database
-                if (!isOwner) return aksa.reply(dari, 'Fitur ini hanya dapat digunakan oleh Owner Lucya')
-                if (args.length === 1) return aksa.reply(dari, 'Masukkan nomornya, *GUNAKAN AWALAN 62* contoh: 6281281817375') 
-                {
-                    let inx = pengirim.indexOf(args[1] + '@c.us')
-                    pengirim.splice(inx, 1)
-                    fs.writeFileSync('./lib/user.json', JSON.stringify(pengirim))
-                    aksa.reply(dari, 'Sukses menghapus nomor from database', id)
-                }
-                break
-            case `${prefix}listno`:
-                if (!isOwner) return aksa.reply(dari, 'Fitur ini hanya dapat digunakan oleh Owner Lucya')
-                let listno = `Daftar Nomor terdaftar\nTotal : ${pengirim.length}\n`
-                for (let i of pengirim) {
-                    listno += `☛ ${i.replace(/@c.us/g,'')}\n`
-                }
-                await aksa.reply(dari, listno, id)
-                break
 
-                //pray menu------------------------------------------------------------------------------------------------------------------------------------
+                    break
+                case `${prefix}remove`: //menghapus nomor from database
+                    if (!isOwner) return aksa.reply(dari, 'Fitur ini hanya dapat digunakan oleh Owner Lucya')
+                    if (args.length === 1) return aksa.reply(dari, 'Masukkan nomornya, *GUNAKAN AWALAN 62* contoh: 6281281817375') {
+                        let inx = pengirim.indexOf(args[1] + '@c.us')
+                        pengirim.splice(inx, 1)
+                        fs.writeFileSync('./lib/user.json', JSON.stringify(pengirim))
+                        aksa.reply(dari, 'Sukses menghapus nomor from database', id)
+                    }
+                    break
+                case `${prefix}listno`:
+                    if (!isOwner) return aksa.reply(dari, 'Fitur ini hanya dapat digunakan oleh Owner Lucya')
+                    let listno = `Daftar Nomor terdaftar\nTotal : ${pengirim.length}\n`
+                    for (let i of pengirim) {
+                        listno += `☛ ${i.replace(/@c.us/g,'')}\n`
+                    }
+                    await aksa.reply(dari, listno, id)
+                    break
 
-            case `${prefix}jadwalshalat`:
-            case `${prefix}jadwalsholat`:
-                if (!isGroupMsg) return aksa.reply(dari, `Perintah ini hanya bisa di gunakan dalam group!`, id)
-                if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik @limit Untuk Mengecek Kuota Limit Kamu`, id)
-                if (args.length === 1) return aksa.reply(dari, `[❗] Kirim perintah *@jadwalShalat [ Daerah ]*\ncontoh : *@jadwalShalat Tangerang*\nUntuk list daerah kirim perintah *@listDaerah*`)
-                const daerah = body.slice(14)
-                const jadwalShalat = await axios.get(`https://api.vhtear.com/jadwalsholat?query=${daerah}&apiKey=${vhtear}`)
-                if (jadwalShalat.data.error) return aksa.reply(dari, jadwalShalat.data.error, id)
-                const {
-                    Shubuh, Zduhur, Ashr, Magrib, Isya, kota
-                } = await jadwalShalat.data
-                arrbulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-                tgl = new Date().getDate()
-                bln = new Date().getMonth()
-                thn = new Date().getFullYear()
-                const resultJadwal = `「 JADWAL SHALAT 」\n\nJadwal shalat di ${kota}, ${tgl}-${arrbulan[bln]}-${thn}\n\nSubuh : ${Shubuh}\nDzuhur : ${Zduhur}\nAshar : ${Ashr}\nMaghrib : ${Magrib}\nIsya : ${Isya}`
-                await limitAdd(serial)
-                break
-            case `${prefix}quran`:
-                if (!isGroupMsg) return aksa.reply(dari, `Perintah ini hanya bisa di gunakan dalam group!`, id)
-                if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik @limit Untuk Mengecek Kuota Limit Kamu`, id)
-                if (args.length === 1) return aksa.reply(dari, `Kirim perintah Surah Quran kamu dengan cara ketik perintah :\n*@quran* [ Urutan Surat ]\nContoh :\n*@quran 1*`, id)
-                const qura = `https://api.vhtear.com/quran?no=${args[1]}&apikey=${vhtear}`
-                const quraan = await axios.get(qura)
-                const quraann = quraan.data
-                let hasqu = `*「 AL-QURAN 」*\n\n*Surah : ${quraann.result.surah}*\n*Quran* : ${quraann.result.quran}*`
-                await aksa.reply(dari, `${hasqu}`, id).catch((e) => aksa.reply(dari, `*Terdapat kesalahan saat mencari surat ${args[1]}*`, id))
-                await limitAdd(serial)
-                break
-            case `${prefix}listsurah`:
-                if (!isGroupMsg) return aksa.reply(dari, `Perintah ini hanya bisa di gunakan dalam group!`, id)
-                try {
-                    axios.get('https://raw.githubusercontent.com/ArugaZ/scraper-results/main/islam/surah.json')
-                        .then((response) => {
-                            let hehex = '*「 DAFTAR SURAH 」*\n\n___________________________\n'
-                            let nmr = 1
-                            for (let i = 0; i < response.data.data.length; i++) {
-                                hehex += nmr + '. ' + monospace(response.data.data[i].name.transliteration.id.toLowerCase()) + '\n'
-                                nmr++
-                            }
-                            hehex += `${prefix}__________________________`
-                            aksa.reply(dari, hehex, id)
-                        })
-                } catch (err) {
-                    aksa.reply(dari, err, id)
-                }
-                break
-            case `${prefix}infosurah`:
-                if (!isGroupMsg) return aksa.reply(dari, `Perintah ini hanya bisa di gunakan dalam group!`, id)
-                if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik @limit Untuk Mengecek Kuota Limit Kamu`, id)
-                if (args.length == 1) return aksa.reply(dari, `Kirim perintah *@infosurah [ Nama Surah ]*\nContoh : *@infosurah al-fatihah*`, message.id)
-                var responseh = await axios.get('https://raw.githubusercontent.com/ArugaZ/scraper-results/main/islam/surah.json')
-                var {
-                    data
-                } = responseh.data
-                var idx = data.findIndex(function (post, index) {
-                    if ((post.name.transliteration.id.toLowerCase() == args[1].toLowerCase()) || (post.name.transliteration.en.toLowerCase() == args[1].toLowerCase()))
-                        return true;
-                });
-                try {
-                    var pesan = "*「 INFORMASI SURAH 」*\n\n___________________________\n\n"
-                    pesan = pesan + "➸ *Nama* : " + data[idx].name.transliteration.id + "\n" + "➸ *Asma* : " + data[idx].name.short + "\n" + "➸ *Arti* : " + data[idx].name.translation.id + "\n" + "➸ *Jumlah ayat* : " + data[idx].numberOfVerses + "\n" + "➸ *Nomor surah* : " + data[idx].number + "\n" + "Jenis : " + data[idx].revelation.id + "\n" + "➸ *Keterangan* : " + data[idx].tafsir.id
-                    pesan += '\n\n___________________________'
-                    aksa.reply(dari, pesan, message.id)
-                    limitAdd(serial)
-                } catch {
-                    aksa.reply(dari, 'Data tidak ditemukan, atau nama surah salah', id)
-                }
-                break
-            case `${prefix}tafsir`:
-                if (!isGroupMsg) return aksa.reply(dari, `Perintah ini hanya bisa di gunakan dalam group!`, id)
-                if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik @limit Untuk Mengecek Kuota Limit Kamu`, id)
-                if (args.length == 1) return aksa.reply(dari, `Kirim perintah *@tafsir [ Nama Surah ] [ Ayat ]*\nContoh : *@tafsir al-fatihah 2*`, message.id)
-                var responsh = await axios.get('https://raw.githubusercontent.com/ArugaZ/scraper-results/main/islam/surah.json')
-                var {
-                    data
-                } = responsh.data
-                var idx = data.findIndex(function (post, index) {
-                    if ((post.name.transliteration.id.toLowerCase() == args[1].toLowerCase()) || (post.name.transliteration.en.toLowerCase() == args[1].toLowerCase()))
-                        return true;
-                });
-                try {
-                    nmr = data[idx].number
-                    if (!isNaN(nmr)) {
-                        var responsih = await axios.get('https://api.quran.sutanlab.id/surah/' + nmr + "/" + args[2])
-                        var {
-                            data
-                        } = responsih.data
-                        pesan = ""
-                        pesan = pesan + "*「 TAFSIR 」*\n\nTafsir Q.S. " + data.surah.name.transliteration.id + ":" + args[2] + "\n\n"
-                        pesan = pesan + data.text.arab + "\n\n"
-                        pesan = pesan + "_" + data.translation.id + "_" + "\n\n" + data.tafsir.id.long
+                    //pray menu------------------------------------------------------------------------------------------------------------------------------------
+
+                case `${prefix}jadwalshalat`:
+                case `${prefix}jadwalsholat`:
+                    if (!isGroupMsg) return aksa.reply(dari, `Perintah ini hanya bisa di gunakan dalam group!`, id)
+                    if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik @limit Untuk Mengecek Kuota Limit Kamu`, id)
+                    if (args.length === 1) return aksa.reply(dari, `[❗] Kirim perintah *@jadwalShalat [ Daerah ]*\ncontoh : *@jadwalShalat Tangerang*\nUntuk list daerah kirim perintah *@listDaerah*`)
+                    const daerah = body.slice(14)
+                    const jadwalShalat = await axios.get(`https://api.vhtear.com/jadwalsholat?query=${daerah}&apiKey=${vhtear}`)
+                    if (jadwalShalat.data.error) return aksa.reply(dari, jadwalShalat.data.error, id)
+                    const {
+                        Shubuh, Zduhur, Ashr, Magrib, Isya, kota
+                    } = await jadwalShalat.data
+                    arrbulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+                    tgl = new Date().getDate()
+                    bln = new Date().getMonth()
+                    thn = new Date().getFullYear()
+                    const resultJadwal = `「 JADWAL SHALAT 」\n\nJadwal shalat di ${kota}, ${tgl}-${arrbulan[bln]}-${thn}\n\nSubuh : ${Shubuh}\nDzuhur : ${Zduhur}\nAshar : ${Ashr}\nMaghrib : ${Magrib}\nIsya : ${Isya}`
+                    await limitAdd(serial)
+                    break
+                case `${prefix}quran`:
+                    if (!isGroupMsg) return aksa.reply(dari, `Perintah ini hanya bisa di gunakan dalam group!`, id)
+                    if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik @limit Untuk Mengecek Kuota Limit Kamu`, id)
+                    if (args.length === 1) return aksa.reply(dari, `Kirim perintah Surah Quran kamu dengan cara ketik perintah :\n*@quran* [ Urutan Surat ]\nContoh :\n*@quran 1*`, id)
+                    const qura = `https://api.vhtear.com/quran?no=${args[1]}&apikey=${vhtear}`
+                    const quraan = await axios.get(qura)
+                    const quraann = quraan.data
+                    let hasqu = `*「 AL-QURAN 」*\n\n*Surah : ${quraann.result.surah}*\n*Quran* : ${quraann.result.quran}*`
+                    await aksa.reply(dari, `${hasqu}`, id).catch((e) => aksa.reply(dari, `*Terdapat kesalahan saat mencari surat ${args[1]}*`, id))
+                    await limitAdd(serial)
+                    break
+                case `${prefix}listsurah`:
+                    if (!isGroupMsg) return aksa.reply(dari, `Perintah ini hanya bisa di gunakan dalam group!`, id)
+                    try {
+                        axios.get('https://raw.githubusercontent.com/ArugaZ/scraper-results/main/islam/surah.json')
+                            .then((response) => {
+                                let hehex = '*「 DAFTAR SURAH 」*\n\n___________________________\n'
+                                let nmr = 1
+                                for (let i = 0; i < response.data.data.length; i++) {
+                                    hehex += nmr + '. ' + monospace(response.data.data[i].name.transliteration.id.toLowerCase()) + '\n'
+                                    nmr++
+                                }
+                                hehex += `${prefix}__________________________`
+                                aksa.reply(dari, hehex, id)
+                            })
+                    } catch (err) {
+                        aksa.reply(dari, err, id)
+                    }
+                    break
+                case `${prefix}infosurah`:
+                    if (!isGroupMsg) return aksa.reply(dari, `Perintah ini hanya bisa di gunakan dalam group!`, id)
+                    if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik @limit Untuk Mengecek Kuota Limit Kamu`, id)
+                    if (args.length == 1) return aksa.reply(dari, `Kirim perintah *@infosurah [ Nama Surah ]*\nContoh : *@infosurah al-fatihah*`, message.id)
+                    var responseh = await axios.get('https://raw.githubusercontent.com/ArugaZ/scraper-results/main/islam/surah.json')
+                    var {
+                        data
+                    } = responseh.data
+                    var idx = data.findIndex(function (post, index) {
+                        if ((post.name.transliteration.id.toLowerCase() == args[1].toLowerCase()) || (post.name.transliteration.en.toLowerCase() == args[1].toLowerCase()))
+                            return true;
+                    });
+                    try {
+                        var pesan = "*「 INFORMASI SURAH 」*\n\n___________________________\n\n"
+                        pesan = pesan + "➸ *Nama* : " + data[idx].name.transliteration.id + "\n" + "➸ *Asma* : " + data[idx].name.short + "\n" + "➸ *Arti* : " + data[idx].name.translation.id + "\n" + "➸ *Jumlah ayat* : " + data[idx].numberOfVerses + "\n" + "➸ *Nomor surah* : " + data[idx].number + "\n" + "Jenis : " + data[idx].revelation.id + "\n" + "➸ *Keterangan* : " + data[idx].tafsir.id
                         pesan += '\n\n___________________________'
                         aksa.reply(dari, pesan, message.id)
                         limitAdd(serial)
+                    } catch {
+                        aksa.reply(dari, 'Data tidak ditemukan, atau nama surah salah', id)
                     }
-                } catch {
-                    aksa.reply(dari, 'Data tidak ditemukan, mungkin nama surah/ayat salah', id)
-                }
-                break
+                    break
+                case `${prefix}tafsir`:
+                    if (!isGroupMsg) return aksa.reply(dari, `Perintah ini hanya bisa di gunakan dalam group!`, id)
+                    if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik @limit Untuk Mengecek Kuota Limit Kamu`, id)
+                    if (args.length == 1) return aksa.reply(dari, `Kirim perintah *@tafsir [ Nama Surah ] [ Ayat ]*\nContoh : *@tafsir al-fatihah 2*`, message.id)
+                    var responsh = await axios.get('https://raw.githubusercontent.com/ArugaZ/scraper-results/main/islam/surah.json')
+                    var {
+                        data
+                    } = responsh.data
+                    var idx = data.findIndex(function (post, index) {
+                        if ((post.name.transliteration.id.toLowerCase() == args[1].toLowerCase()) || (post.name.transliteration.en.toLowerCase() == args[1].toLowerCase()))
+                            return true;
+                    });
+                    try {
+                        nmr = data[idx].number
+                        if (!isNaN(nmr)) {
+                            var responsih = await axios.get('https://api.quran.sutanlab.id/surah/' + nmr + "/" + args[2])
+                            var {
+                                data
+                            } = responsih.data
+                            pesan = ""
+                            pesan = pesan + "*「 TAFSIR 」*\n\nTafsir Q.S. " + data.surah.name.transliteration.id + ":" + args[2] + "\n\n"
+                            pesan = pesan + data.text.arab + "\n\n"
+                            pesan = pesan + "_" + data.translation.id + "_" + "\n\n" + data.tafsir.id.long
+                            pesan += '\n\n___________________________'
+                            aksa.reply(dari, pesan, message.id)
+                            limitAdd(serial)
+                        }
+                    } catch {
+                        aksa.reply(dari, 'Data tidak ditemukan, mungkin nama surah/ayat salah', id)
+                    }
+                    break
 
-                //media & downloader menu-----------------------------------------------------------------------------------------------------------------------------------
+                    //media & downloader menu-----------------------------------------------------------------------------------------------------------------------------------
 
-            case `${prefix}ytmp4`:
-                if (!isGroupMsg) return aksa.reply(dari, `Perintah ini hanya bisa di gunakan dalam group!`, id)
-                if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik @limit Untuk Mengecek Kuota Limit Kamu`, id)
-                if (args.length === 1) return aksa.reply(dari, `Kirim perintah *@ytmp4 [ Link Yt ]*, untuk contoh silahkan kirim perintah *@readme*`)
-                let isLin = args[1].match(/(?:https?:\/{2})?(?:w{3}\.)?youtu(?:be)?\.(?:com|be)(?:\/watch\?v=|\/)([^\s&]+)/)
-                if (!isLin) return aksa.reply(dari, mess.error.Iv, id)
-                try {
+                case `${prefix}ytmp4`:
+                    if (!isGroupMsg) return aksa.reply(dari, `Perintah ini hanya bisa di gunakan dalam group!`, id)
+                    if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik @limit Untuk Mengecek Kuota Limit Kamu`, id)
+                    if (args.length === 1) return aksa.reply(dari, `Kirim perintah *@ytmp4 [ Link Yt ]*, untuk contoh silahkan kirim perintah *@readme*`)
+                    let isLin = args[1].match(/(?:https?:\/{2})?(?:w{3}\.)?youtu(?:be)?\.(?:com|be)(?:\/watch\?v=|\/)([^\s&]+)/)
+                    if (!isLin) return aksa.reply(dari, mess.error.Iv, id)
+                    try {
+                        aksa.reply(dari, mess.wait, id)
+                        const ytvh = await fetch(`http://api.vhtear.com/ytdl?link=${args[1]}&apikey=${vhtear}`)
+                        if (!ytvh.ok) throw new Error(`Error Get Video : ${ytvh.statusText}`)
+                        const ytvh2 = await ytvh.json()
+                        if (ytvh2.status == false) {
+                            aksa.reply(dari, `*Maaf Terdapat kesalahan saat mengambil data, mohon pilih media lain...*`, id)
+                        } else {
+                            if (Number(ytvh2.result.size.split(' MB')[0]) > 75.00) return aksa.reply(dari, `Maaf durasi video sudah melebihi batas maksimal 30 MB!`, id)
+                            const {
+                                title,
+                                UrlVideo,
+                                imgUrl,
+                                size
+                            } = await ytvh2.result
+                            aksa.sendFileFromUrl(dari, imgUrl, 'thumb.jpg', `*「 YOUTUBE MP4 」*\n\n➸ *Judul* : ${title}\n➸ *Filesize* : ${size}\n\n_*Untuk durasi lebih dari batas disajikan dalam bentuk link*._\n${UrlVideo}`, id)
+                            await aksa.sendFileFromUrl(dari, UrlVideo, `${title}.mp4`, '', id).catch(() => aksa.reply(dari, mess.error.Yt4, id))
+                            await limitAdd(serial)
+                        }
+                    } catch (err) {
+                        aksa.sendText(ownerNumber, 'Error ytmp4 : ' + err)
+                        aksa.reply(dari, mess.error.Yt4, id)
+                        console.log(err)
+                    }
+                    break
+                case `${prefix}ytmp3`:
+                    if (!isGroupMsg) return aksa.reply(dari, `Perintah ini hanya bisa di gunakan dalam group!`, id)
+                    if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik @limit Untuk Mengecek Kuota Limit Kamu`, id)
+                    if (args.length === 1) return aksa.reply(dari, `Kirim perintah *!ytmp3 [ Link Yt ]*, untuk contoh silahkan kirim perintah *@readme*`, id)
+                    let isLinks = args[1].match(/(?:https?:\/{2})?(?:w{3}\.)?youtu(?:be)?\.(?:com|be)(?:\/watch\?v=|\/)([^\s&]+)/)
+                    if (!isLinks) return aksa.reply(dari, mess.error.Iv, id)
+                    try {
+                        aksa.reply(dari, mess.wait, id)
+                        const vhtearyt3 = await fetch(`https://api.vhtear.com/ytdl?link=${args[1]}&apikey=${vhtear}`)
+                        if (!vhtearyt3.ok) throw new Error(`Error ytmp3 3 : ${vhtearyt3.statusText}`)
+                        const vhtearyt33 = await vhtearyt3.json()
+                        if (vhtearyt33.status == false) {
+                            aksa.reply(dari, `*Maaf Terdapat kesalahan saat mengambil data, mohon pilih media lain...*`, id)
+                        } else {
+                            if (Number(vhtearyt33.result.size.split(' MB')[0]) >= 50.00) return aksa.reply(dari, 'Maaf durasi audio sudah melebihi batas maksimal 10 MB!', id)
+                            const {
+                                title,
+                                ext,
+                                size,
+                                UrlMp3,
+                                status,
+                                imgUrl
+                            } = await vhtearyt33.result
+                            const captions = `*「 YOUTUBE MP3 」*\n\n➸ *Judul* : ${title}\n➸ *Filesize* : ${size}\n\n_*Untuk durasi lebih dari batas disajikan dalam bentuk link*._\n${UrlMp3}`
+                            aksa.sendFileFromUrl(dari, imgUrl, `thumb.jpg`, captions, id)
+                            await aksa.sendFileFromUrl(dari, UrlMp3, `${title}.mp3`, '', id).catch(() => aksa.reply(dari, mess.error.Yt4, id))
+                            await limitAdd(serial)
+                        }
+                    } catch (err) {
+                        aksa.sendText(ownerNumber, 'Error ytmp3 : ' + err)
+                        aksa.reply(dari, mess.error.Yt3, id)
+                    }
+                    break
+                case `${prefix}smule`:
+                    if (!isGroupMsg) return aksa.reply(dari, 'Perintah ini hanya bisa di gunakan dalam group!', id)
+                    if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik @limit Untuk Mengecek Kuota Limit Kamu`, id)
+
+                    await limitAdd(serial)
+                    if (args.length === 1) return aksa.reply(dari, 'Kirim perintah *@smule [linkSmule]*\nContoh : *@smule https://www.smule.com/p/767512225_3062360163*', id)
                     aksa.reply(dari, mess.wait, id)
-                    const ytvh = await fetch(`http://api.vhtear.com/ytdl?link=${args[1]}&apikey=${vhtear}`)
-                    if (!ytvh.ok) throw new Error(`Error Get Video : ${ytvh.statusText}`)
-                    const ytvh2 = await ytvh.json()
-                    if (ytvh2.status == false) {
-                        aksa.reply(dari, `*Maaf Terdapat kesalahan saat mengambil data, mohon pilih media lain...*`, id)
-                    } else {
-                        if (Number(ytvh2.result.size.split(' MB')[0]) > 75.00) return aksa.reply(dari, `Maaf durasi video sudah melebihi batas maksimal 30 MB!`, id)
+                    arg = body.trim().split(' ')
+                    console.log(...arg[1])
+                    var slicedArgs = Array.prototype.slice.call(arg, 1);
+                    console.log(slicedArgs)
+                    const sml = await slicedArgs.join(' ')
+                    console.log(sml)
+                    try {
+                        const resp = await axios.get('https://api.vhtear.com/getsmule?link=' + sml + '&apikey=' + vhtear)
                         const {
+                            Type,
                             title,
-                            UrlVideo,
-                            imgUrl,
-                            size
-                        } = await ytvh2.result
-                        aksa.sendFileFromUrl(dari, imgUrl, 'thumb.jpg', `*「 YOUTUBE MP4 」*\n\n➸ *Judul* : ${title}\n➸ *Filesize* : ${size}\n\n_*Untuk durasi lebih dari batas disajikan dalam bentuk link*._\n${UrlVideo}`, id)
-                        await aksa.sendFileFromUrl(dari, UrlVideo, `${title}.mp4`, '', id).catch(() => aksa.reply(dari, mess.error.Yt4, id))
-                        await limitAdd(serial)
-                    }
-                } catch (err) {
-                    aksa.sendText(ownerNumber, 'Error ytmp4 : ' + err)
-                    aksa.reply(dari, mess.error.Yt4, id)
-                    console.log(err)
-                }
-                break
-            case `${prefix}ytmp3`:
-                if (!isGroupMsg) return aksa.reply(dari, `Perintah ini hanya bisa di gunakan dalam group!`, id)
-                if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik @limit Untuk Mengecek Kuota Limit Kamu`, id)
-                if (args.length === 1) return aksa.reply(dari, `Kirim perintah *!ytmp3 [ Link Yt ]*, untuk contoh silahkan kirim perintah *@readme*`, id)
-                let isLinks = args[1].match(/(?:https?:\/{2})?(?:w{3}\.)?youtu(?:be)?\.(?:com|be)(?:\/watch\?v=|\/)([^\s&]+)/)
-                if (!isLinks) return aksa.reply(dari, mess.error.Iv, id)
-                try {
-                    aksa.reply(dari, mess.wait, id)
-                    const vhtearyt3 = await fetch(`https://api.vhtear.com/ytdl?link=${args[1]}&apikey=${vhtear}`)
-                    if (!vhtearyt3.ok) throw new Error(`Error ytmp3 3 : ${vhtearyt3.statusText}`)
-                    const vhtearyt33 = await vhtearyt3.json()
-                    if (vhtearyt33.status == false) {
-                        aksa.reply(dari, `*Maaf Terdapat kesalahan saat mengambil data, mohon pilih media lain...*`, id)
-                    } else {
-                        if (Number(vhtearyt33.result.size.split(' MB')[0]) >= 50.00) return aksa.reply(dari, 'Maaf durasi audio sudah melebihi batas maksimal 10 MB!', id)
-                        const {
-                            title,
-                            ext,
-                            size,
-                            UrlMp3,
-                            status,
-                            imgUrl
-                        } = await vhtearyt33.result
-                        const captions = `*「 YOUTUBE MP3 」*\n\n➸ *Judul* : ${title}\n➸ *Filesize* : ${size}\n\n_*Untuk durasi lebih dari batas disajikan dalam bentuk link*._\n${UrlMp3}`
-                        aksa.sendFileFromUrl(dari, imgUrl, `thumb.jpg`, captions, id)
-                        await aksa.sendFileFromUrl(dari, UrlMp3, `${title}.mp3`, '', id).catch(() => aksa.reply(dari, mess.error.Yt4, id))
-                        await limitAdd(serial)
-                    }
-                } catch (err) {
-                    aksa.sendText(ownerNumber, 'Error ytmp3 : ' + err)
-                    aksa.reply(dari, mess.error.Yt3, id)
-                }
-                break
-            case `${prefix}smule`:
-                if (!isGroupMsg) return aksa.reply(dari, 'Perintah ini hanya bisa di gunakan dalam group!', id)
-                if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik @limit Untuk Mengecek Kuota Limit Kamu`, id)
-
-                await limitAdd(serial)
-                if (args.length === 1) return aksa.reply(dari, 'Kirim perintah *@smule [linkSmule]*\nContoh : *@smule https://www.smule.com/p/767512225_3062360163*', id)
-                aksa.reply(dari, mess.wait, id)
-                arg = body.trim().split(' ')
-                console.log(...arg[1])
-                var slicedArgs = Array.prototype.slice.call(arg, 1);
-                console.log(slicedArgs)
-                const sml = await slicedArgs.join(' ')
-                console.log(sml)
-                try {
-                    const resp = await axios.get('https://api.vhtear.com/getsmule?link=' + sml + '&apikey=' + vhtear)
-                    const {
-                        Type,
-                        title,
-                        url,
-                        image
-                    } = resp.data.result
-                    const sml3 = `*Music Ditemukan!*
+                            url,
+                            image
+                        } = resp.data.result
+                        const sml3 = `*Music Ditemukan!*
 
 ➸ *Judul:* ${title}
 ➸ *Type:* ${Type}`
 
-                    aksa.sendImage(dari, image, `${title}.jpg`, sml3)
-                    aksa.sendFileFromUrl(dari, url, `${title}.mp3`, sml3, id)
-                } catch (err) {
-                    console.error(err.message)
-                    await aksa.sendFileFromUrl(dari, errorurl2, 'error.png', '💔️ Maaf, Music tidak ditemukan')
-                    aksa.sendText(ownerNumber, 'Smule Error : ' + err)
-                }
-                break
-            case `${prefix}ytsearch`:
-            case `${prefix}searchyt`:
-                //premium command, lu tau kemana harus ngehubungi
-                break
-            case `${prefix}play`:
-                if (!isRegis) return aksa.reply(dari, `Maaf ${pushname}, sepertinya kamu belum terdaftar sebagai user Lucya, untuk pendaftaran bisa menggunakan *!regis* |nama|no hp. Contoh: !regis |${pushname}|${serial.replace(/@c.us/g,'')}`, id)
-                if (!isAdmin) return aksa.reply(dari, `Mohon maaf anda tidak bisa menggunakan fitur premium!`, id)
-                if (!isGroupMsg) return aksa.reply(dari, 'Perintah ini hanya bisa di gunakan dalam group', id)
-                if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik #ceklimit Untuk Mengecek Kuota Limit Kamu`, id)
-                if (args.length == 1) return aksa.reply(dari, `Untuk mencari lagu from youtube\n\nPenggunaan: !play judul lagu`, id)
-                try {
-                    aksa.reply(dari, mess.wait, id)
-                    const serplay = body.slice(6)
-                    const webplay = await fetch(`https://api.vhtear.com/ytmp3?query=${serplay}&apikey=${vhtear}`)
-                    if (!webplay.ok) throw new Error(`Error Get Video : ${webplay.statusText}`)
-                    const webplay2 = await webplay.json()
-                    if (webplay2.status == false) {
-                        aksa.reply(dari, `*Maaf Terdapat kesalahan saat mengambil data, mohon pilih media lain...*`, id)
-                    } else {
-                        if (Number(webplay2.result.size.split(' MB')[0]) >= 10.00) return aksa.reply(dari, 'Maaf durasi music sudah melebihi batas maksimal 10 MB!', id)
-                        const {
-                            image,
-                            mp3,
-                            size,
-                            ext,
-                            title,
-                            duration
-                        } = await webplay2.result
-                        const captplay = `*「 PLAY 」*\n\n➸ *Judul* : ${title}\n➸ *Durasi* : ${duration}\n➸ *Filesize* : ${size}\n➸ *Exp* : ${ext}\n\n_*Music Sedang Dikirim*_`
-                        aksa.sendFileFromUrl(dari, image, `thumb.jpg`, captplay, id)
-                        await aksa.sendFileFromUrl(dari, mp3, `${title}.mp3`, '', id).catch(() => aksa.reply(dari, mess.error.Yt4, id))
-                        await limitAdd(serial)
+                        aksa.sendImage(dari, image, `${title}.jpg`, sml3)
+                        aksa.sendFileFromUrl(dari, url, `${title}.mp3`, sml3, id)
+                    } catch (err) {
+                        console.error(err.message)
+                        await aksa.sendFileFromUrl(dari, errorurl2, 'error.png', '💔️ Maaf, Music tidak ditemukan')
+                        aksa.sendText(ownerNumber, 'Smule Error : ' + err)
                     }
-                } catch (err) {
-                    aksa.sendText(ownerNumber, 'Error Play : ' + err)
-                    aksa.reply(dari, mess.error.Yt3, id)
-                }
-                break
-            case `${prefix}fb`:
-            case `${prefix}facebook`:
-                if (!isRegis) return aksa.reply(dari, `Maaf ${pushname}, sepertinya kamu belum terdaftar sebagai user Lucya, untuk pendaftaran bisa menggunakan *!regis* |nama|no hp. Contoh: !regis |${pushname}|${serial.replace(/@c.us/g,'')}`, id)
-                if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik !limit Untuk Mengecek Kuota Limit Kamu`, id)
+                    break
+                case `${prefix}ytsearch`:
+                case `${prefix}searchyt`:
+                    //premium command, lu tau kemana harus ngehubungi
+                    break
+                case `${prefix}play`:
+                    if (!isRegis) return aksa.reply(dari, `Maaf ${pushname}, sepertinya kamu belum terdaftar sebagai user Lucya, untuk pendaftaran bisa menggunakan *!regis* |nama|no hp. Contoh: !regis |${pushname}|${serial.replace(/@c.us/g,'')}`, id)
+                    if (!isAdmin) return aksa.reply(dari, `Mohon maaf anda tidak bisa menggunakan fitur premium!`, id)
+                    if (!isGroupMsg) return aksa.reply(dari, 'Perintah ini hanya bisa di gunakan dalam group', id)
+                    if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik #ceklimit Untuk Mengecek Kuota Limit Kamu`, id)
+                    if (args.length == 1) return aksa.reply(dari, `Untuk mencari lagu from youtube\n\nPenggunaan: !play judul lagu`, id)
+                    try {
+                        aksa.reply(dari, mess.wait, id)
+                        const serplay = body.slice(6)
+                        const webplay = await fetch(`https://api.vhtear.com/ytmp3?query=${serplay}&apikey=${vhtear}`)
+                        if (!webplay.ok) throw new Error(`Error Get Video : ${webplay.statusText}`)
+                        const webplay2 = await webplay.json()
+                        if (webplay2.status == false) {
+                            aksa.reply(dari, `*Maaf Terdapat kesalahan saat mengambil data, mohon pilih media lain...*`, id)
+                        } else {
+                            if (Number(webplay2.result.size.split(' MB')[0]) >= 10.00) return aksa.reply(dari, 'Maaf durasi music sudah melebihi batas maksimal 10 MB!', id)
+                            const {
+                                image,
+                                mp3,
+                                size,
+                                ext,
+                                title,
+                                duration
+                            } = await webplay2.result
+                            const captplay = `*「 PLAY 」*\n\n➸ *Judul* : ${title}\n➸ *Durasi* : ${duration}\n➸ *Filesize* : ${size}\n➸ *Exp* : ${ext}\n\n_*Music Sedang Dikirim*_`
+                            aksa.sendFileFromUrl(dari, image, `thumb.jpg`, captplay, id)
+                            await aksa.sendFileFromUrl(dari, mp3, `${title}.mp3`, '', id).catch(() => aksa.reply(dari, mess.error.Yt4, id))
+                            await limitAdd(serial)
+                        }
+                    } catch (err) {
+                        aksa.sendText(ownerNumber, 'Error Play : ' + err)
+                        aksa.reply(dari, mess.error.Yt3, id)
+                    }
+                    break
+                case `${prefix}fb`:
+                case `${prefix}facebook`:
+                    if (!isRegis) return aksa.reply(dari, `Maaf ${pushname}, sepertinya kamu belum terdaftar sebagai user Lucya, untuk pendaftaran bisa menggunakan *!regis* |nama|no hp. Contoh: !regis |${pushname}|${serial.replace(/@c.us/g,'')}`, id)
+                    if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik !limit Untuk Mengecek Kuota Limit Kamu`, id)
 
-                await limitAdd(serial)
-                if (isMedialimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, kuota limit media kamu sudah habis, ketik !limed untuk mengecek kuota Limit media kamu`, id)
-                await MedialimitAdd(serial)
-                if (args.length === 1) return aksa.reply(dari, `Untuk mendownload video from link facebook\nketik: !fb [link_fb]`, id)
-                if (!args[1].match(isUrl) && !args[1].includes('facebook.com')) return aksa.reply(dari, `Maaf, link yang kamu kirim tidak valid. [Invalid Link]`, id)
-                await aksa.reply(dari, mess.wait, id);
-                try {
-                    aksa.reply(dari, mess.wait, id)
-                    const respi = await axios.get('https://api.vhtear.com/fbdl?link=' + args[1] + '&apikey=' + vhtear)
-                    const {
-                        VideoUrl
-                    } = respi.data.result
-                    aksa.sendFileFromUrl(dari, VideoUrl, `fb.mp4`, '', id)
-                } catch (err) {
-                    console.error(err.message)
-                    await aksa.sendFileFromUrl(dari, errorurl, 'error.png', '💔️ Maaf, Video tidak ditemukan')
-                    aksa.sendText(ownerNumber, 'Facebook Error : ' + err)
-                }
-                break
-            case `${prefix}twt`:
-            case `${prefix}twitter`:
-                if (!isGroupMsg) return aksa.reply(dari, 'Perintah ini hanya bisa di gunakan dalam group!', id)
-                if (!isRegis) return aksa.reply(dari, `Maaf ${pushname}, sepertinya kamu belum terdaftar sebagai user Lucya, untuk pendaftaran bisa menggunakan *!regis* |nama|no hp. Contoh: !regis |${pushname}|${serial.replace(/@c.us/g,'')}`, id)
-                if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik !limit Untuk Mengecek Kuota Limit Kamu`, id)
-                await limitAdd(serial)
+                    await limitAdd(serial)
+                    if (isMedialimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, kuota limit media kamu sudah habis, ketik !limed untuk mengecek kuota Limit media kamu`, id)
+                    await MedialimitAdd(serial)
+                    if (args.length === 1) return aksa.reply(dari, `Untuk mendownload video from link facebook\nketik: !fb [link_fb]`, id)
+                    if (!args[1].match(isUrl) && !args[1].includes('facebook.com')) return aksa.reply(dari, `Maaf, link yang kamu kirim tidak valid. [Invalid Link]`, id)
+                    await aksa.reply(dari, mess.wait, id);
+                    try {
+                        aksa.reply(dari, mess.wait, id)
+                        const respi = await axios.get('https://api.vhtear.com/fbdl?link=' + args[1] + '&apikey=' + vhtear)
+                        const {
+                            VideoUrl
+                        } = respi.data.result
+                        aksa.sendFileFromUrl(dari, VideoUrl, `fb.mp4`, '', id)
+                    } catch (err) {
+                        console.error(err.message)
+                        await aksa.sendFileFromUrl(dari, errorurl, 'error.png', '💔️ Maaf, Video tidak ditemukan')
+                        aksa.sendText(ownerNumber, 'Facebook Error : ' + err)
+                    }
+                    break
+                case `${prefix}twt`:
+                case `${prefix}twitter`:
+                    if (!isGroupMsg) return aksa.reply(dari, 'Perintah ini hanya bisa di gunakan dalam group!', id)
+                    if (!isRegis) return aksa.reply(dari, `Maaf ${pushname}, sepertinya kamu belum terdaftar sebagai user Lucya, untuk pendaftaran bisa menggunakan *!regis* |nama|no hp. Contoh: !regis |${pushname}|${serial.replace(/@c.us/g,'')}`, id)
+                    if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik !limit Untuk Mengecek Kuota Limit Kamu`, id)
+                    await limitAdd(serial)
 
-                if (isMedialimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, kuota limit media kamu sudah habis, ketik !limed untuk mengecek kuota Limit media kamu`, id)
-                await MedialimitAdd(serial)
-                if (args.length === 1) return aksa.reply(dari, 'Kirim perintah *!twitter [linkTwitter]* untuk contoh silahkan kirim perintah *!readme*')
-                arg = body.trim().split(' ')
-                console.log(...arg[1])
-                var slicedArgs = Array.prototype.slice.call(arg, 1);
-                console.log(slicedArgs)
-                const twtdl = await slicedArgs.join(' ')
-                console.log(twtdl)
-                try {
-                    const twtdl2 = await axios.get('ttps://api.vhtear.com/twitter?link=' + twtdl + '&apikey=' + vhtear)
-                    const {
-                        desk,
-                        urlVideo
-                    } = twtdl2.data.result
-                    const twtdl3 = `*「 TWITTER 」*
+                    if (isMedialimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, kuota limit media kamu sudah habis, ketik !limed untuk mengecek kuota Limit media kamu`, id)
+                    await MedialimitAdd(serial)
+                    if (args.length === 1) return aksa.reply(dari, 'Kirim perintah *!twitter [linkTwitter]* untuk contoh silahkan kirim perintah *!readme*')
+                    arg = body.trim().split(' ')
+                    console.log(...arg[1])
+                    var slicedArgs = Array.prototype.slice.call(arg, 1);
+                    console.log(slicedArgs)
+                    const twtdl = await slicedArgs.join(' ')
+                    console.log(twtdl)
+                    try {
+                        const twtdl2 = await axios.get('ttps://api.vhtear.com/twitter?link=' + twtdl + '&apikey=' + vhtear)
+                        const {
+                            desk,
+                            urlVideo
+                        } = twtdl2.data.result
+                        const twtdl3 = `*「 TWITTER 」*
 • *Aplikasi:* Twitter
 • *Deskripsi:* ${desk}`
 
-                    aksa.sendFileFromUrl(dari, urlVideo, `Twitter.mp4`, twtdl3, id)
+                        aksa.sendFileFromUrl(dari, urlVideo, `Twitter.mp4`, twtdl3, id)
+                        await limitAdd(serial)
+                    } catch (err) {
+                        console.error(err.message)
+                        await aksa.sendFileFromUrl(dari, errorurl2, 'error.png', '💔️ Maaf, Video tidak ditemukan')
+                    }
+                    break
+                case `${prefix}ig`:
+                case `${prefix}instagram`:
+                    if (!isRegis) return aksa.reply(dari, `Maaf ${pushname}, sepertinya kamu belum terdaftar sebagai user Lucya, untuk pendaftaran bisa menggunakan *!regis* |nama|no hp. Contoh: !regis |${pushname}|${serial.replace(/@c.us/g,'')}`, id)
+                    if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik !limit Untuk Mengecek Kuota Limit Kamu`, id)
+
                     await limitAdd(serial)
-                } catch (err) {
-                    console.error(err.message)
-                    await aksa.sendFileFromUrl(dari, errorurl2, 'error.png', '💔️ Maaf, Video tidak ditemukan')
-                }
-                break
-            case `${prefix}ig`:
-            case `${prefix}instagram`:
-                if (!isRegis) return aksa.reply(dari, `Maaf ${pushname}, sepertinya kamu belum terdaftar sebagai user Lucya, untuk pendaftaran bisa menggunakan *!regis* |nama|no hp. Contoh: !regis |${pushname}|${serial.replace(/@c.us/g,'')}`, id)
-                if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik !limit Untuk Mengecek Kuota Limit Kamu`, id)
-
-                await limitAdd(serial)
-                if (isMedialimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, kuota limit media kamu sudah habis, ketik !limed untuk mengecek kuota Limit media kamu`, id)
-                await MedialimitAdd(serial)
-                if (args.length === 1) return aksa.reply(dari, `Kirim perintah *!ig [ Link Instagram ]* untuk contoh silahkan kirim perintah *!readme*`)
-                if (!args[1].match(isUrl) && !args[1].includes('instagram.com')) return aksa.reply(dari, `Maaf, link yang kamu kirim tidak valid. [Invalid Link]`, id)
-                await aksa.reply(dari, mess.wait, id);
-                instagram(args[1]).then(async (res) => {
-                    let username = res.owner_username;
-                    for (let i = 0; i < res.post.length; i++) {
-                        if (res.post[i].type == "image") {
-                            await aksa.sendFileFromUrl(dari, res.post[i].urlDownload, "ig.jpg", `*「 INSTAGRAM 」*\n\n➸ *Username* : ${username}\n➸ *Tipe* : Image/Jpg`, id);
-                            limitAdd(serial)
-                        } else if (res.post[i].type == "video") {
-                            await aksa.sendFileFromUrl(dari, res.post[i].urlDownload, "ig.mp4", `*「 INSTAGRAM 」*\n\n➸ *Username* : ${username}\n➸ *Tipe* : Video/MP4`);
-                            limitAdd(serial)
+                    if (isMedialimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, kuota limit media kamu sudah habis, ketik !limed untuk mengecek kuota Limit media kamu`, id)
+                    await MedialimitAdd(serial)
+                    if (args.length === 1) return aksa.reply(dari, `Kirim perintah *!ig [ Link Instagram ]* untuk contoh silahkan kirim perintah *!readme*`)
+                    if (!args[1].match(isUrl) && !args[1].includes('instagram.com')) return aksa.reply(dari, `Maaf, link yang kamu kirim tidak valid. [Invalid Link]`, id)
+                    await aksa.reply(dari, mess.wait, id);
+                    instagram(args[1]).then(async (res) => {
+                        let username = res.owner_username;
+                        for (let i = 0; i < res.post.length; i++) {
+                            if (res.post[i].type == "image") {
+                                await aksa.sendFileFromUrl(dari, res.post[i].urlDownload, "ig.jpg", `*「 INSTAGRAM 」*\n\n➸ *Username* : ${username}\n➸ *Tipe* : Image/Jpg`, id);
+                                limitAdd(serial)
+                            } else if (res.post[i].type == "video") {
+                                await aksa.sendFileFromUrl(dari, res.post[i].urlDownload, "ig.mp4", `*「 INSTAGRAM 」*\n\n➸ *Username* : ${username}\n➸ *Tipe* : Video/MP4`);
+                                limitAdd(serial)
+                            }
                         }
-                    }
-                }).catch((err) => {
-                    console.log(err);
-                    aksa.reply(dari, `Maaf, Terjadi Kesalahan`, id)
-                })
-                break
-            case `${prefix}igstory`:
-                //premium command, lu tau kemana harus ngehubungi
-                break
-            case `${prefix}xnxx`:
-                if (!isRegis) return aksa.reply(dari, `Maaf ${pushname}, sepertinya kamu belum terdaftar sebagai user Lucya, untuk pendaftaran bisa menggunakan *!regis* |nama|no hp. Contoh: !regis |${pushname}|${serial.replace(/@c.us/g,'')}`, id)
-                if (!isGroupMsg) return aksa.reply(dari, 'Perintah ini hanya bisa digunakan dalam group!', id)
-                if (!isNsfw) return aksa.reply(dari, 'command/Perintah NSFW belum di aktifkan di group ini!', id)
-                if (!isRegis) return aksa.reply(dari, `Maaf ${pushname}, sepertinya kamu belum terdaftar sebagai user Lucya, untuk pendaftaran bisa menggunakan *!regis* |nama|no hp. Contoh: !regis |${pushname}|${serial.replace(/@c.us/g,'')}`, id)
-                if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik !limit Untuk Mengecek Kuota Limit Kamu`, id)
-
-                await limitAdd(serial)
-                if (isMedialimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, kuota limit media kamu sudah habis, ketik !limed untuk mengecek kuota Limit media kamu`, id)
-                await MedialimitAdd(serial)
-                if (args.length === 1) return aksa.reply(dari, 'Kirim perintah *!xnxx [linkXnxx]*, untuk contoh silahkan kirim perintah *!readme*')
-                if (!args[1].match(isUrl) && !args[1].includes('xnxx.com')) return aksa.reply(dari, mess.error.Iv, id)
-                try {
-                    aksa.reply(dari, mess.wait, id)
-                    const resq = await axios.get('https://mhankbarbars.herokuapp.com/api/xnxx?url=' + args[1] + '&apiKey=' + apiKey)
-                    const resp = resq.data
-                    if (resp.error) {
-                        aksa.reply(dari, ytvv.error, id)
-                    } else {
-                        if (Number(resp.result.size.split(' MB')[0]) > 20.00) return aksa.reply(dari, 'Maaf durasi video sudah melebihi batas maksimal 20 menit!', id)
-                        aksa.sendFileFromUrl(dari, resp.result.thumb, 'thumb.jpg', `➸ *Judul* : ${resp.result.judul}\n➸ *Deskripsi* : ${resp.result.desc}\n➸ *Filesize* : ${resp.result.size}\n\nSilahkan tunggu sebentar proses pengiriman file membutuhkan waktu beberapa menit.`, id)
-                        await aksa.sendFileFromUrl(dari, resp.result.vid, `${resp.result.title}.mp4`, '', id)
-                    }
-                } catch (err) {
-                    console.log(err)
-                    await aksa.sendFileFromUrl(dari, errorurl2, 'error.png', '💔️ Maaf, Video tidak ditemukan')
-                    aksa.sendText(ownerNumber, 'Xnxx Error : ' + err)
-                }
-                break
-            case `${prefix}images`:
-                if (!isRegis) return aksa.reply(dari, `Maaf ${pushname}, sepertinya kamu belum terdaftar sebagai user Lucya, untuk pendaftaran bisa menggunakan *!regis* |nama|no hp. Contoh: !regis |${pushname}|${serial.replace(/@c.us/g,'')}`, id)
-                if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik !limit Untuk Mengecek Kuota Limit Kamu`, id)
-
-                await limitAdd(serial)
-                if (args.length === 1) return aksa.reply(dari, `Untuk mencari gambar di pinterest\nketik: !images [search]\ncontoh: !images naruto`, id)
-                const cariwall = body.slice(8)
-                const hasilwall = await images.fdci(cariwall)
-                aksa.sendFileFromUrl(dari, hasilwall, '', '', id)
-                    .catch(() => {
-                        aksa.reply(dari, 'Ada yang eror!', id)
+                    }).catch((err) => {
+                        console.log(err);
+                        aksa.reply(dari, `Maaf, Terjadi Kesalahan`, id)
                     })
-                break
+                    break
+                case `${prefix}igstory`:
+                    //premium command, lu tau kemana harus ngehubungi
+                    break
+                case `${prefix}xnxx`:
+                    if (!isRegis) return aksa.reply(dari, `Maaf ${pushname}, sepertinya kamu belum terdaftar sebagai user Lucya, untuk pendaftaran bisa menggunakan *!regis* |nama|no hp. Contoh: !regis |${pushname}|${serial.replace(/@c.us/g,'')}`, id)
+                    if (!isGroupMsg) return aksa.reply(dari, 'Perintah ini hanya bisa digunakan dalam group!', id)
+                    if (!isNsfw) return aksa.reply(dari, 'command/Perintah NSFW belum di aktifkan di group ini!', id)
+                    if (!isRegis) return aksa.reply(dari, `Maaf ${pushname}, sepertinya kamu belum terdaftar sebagai user Lucya, untuk pendaftaran bisa menggunakan *!regis* |nama|no hp. Contoh: !regis |${pushname}|${serial.replace(/@c.us/g,'')}`, id)
+                    if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik !limit Untuk Mengecek Kuota Limit Kamu`, id)
 
-            case `${prefix}smulestalk`:
-                if (!isGroupMsg) return aksa.reply(dari, 'Perintah ini hanya bisa di gunakan dalam group!', id)
-                if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik @limit Untuk Mengecek Kuota Limit Kamu`, id)
+                    await limitAdd(serial)
+                    if (isMedialimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, kuota limit media kamu sudah habis, ketik !limed untuk mengecek kuota Limit media kamu`, id)
+                    await MedialimitAdd(serial)
+                    if (args.length === 1) return aksa.reply(dari, 'Kirim perintah *!xnxx [linkXnxx]*, untuk contoh silahkan kirim perintah *!readme*')
+                    if (!args[1].match(isUrl) && !args[1].includes('xnxx.com')) return aksa.reply(dari, mess.error.Iv, id)
+                    try {
+                        aksa.reply(dari, mess.wait, id)
+                        const resq = await axios.get('https://mhankbarbars.herokuapp.com/api/xnxx?url=' + args[1] + '&apiKey=' + apiKey)
+                        const resp = resq.data
+                        if (resp.error) {
+                            aksa.reply(dari, ytvv.error, id)
+                        } else {
+                            if (Number(resp.result.size.split(' MB')[0]) > 20.00) return aksa.reply(dari, 'Maaf durasi video sudah melebihi batas maksimal 20 menit!', id)
+                            aksa.sendFileFromUrl(dari, resp.result.thumb, 'thumb.jpg', `➸ *Judul* : ${resp.result.judul}\n➸ *Deskripsi* : ${resp.result.desc}\n➸ *Filesize* : ${resp.result.size}\n\nSilahkan tunggu sebentar proses pengiriman file membutuhkan waktu beberapa menit.`, id)
+                            await aksa.sendFileFromUrl(dari, resp.result.vid, `${resp.result.title}.mp4`, '', id)
+                        }
+                    } catch (err) {
+                        console.log(err)
+                        await aksa.sendFileFromUrl(dari, errorurl2, 'error.png', '💔️ Maaf, Video tidak ditemukan')
+                        aksa.sendText(ownerNumber, 'Xnxx Error : ' + err)
+                    }
+                    break
+                case `${prefix}images`:
+                    if (!isRegis) return aksa.reply(dari, `Maaf ${pushname}, sepertinya kamu belum terdaftar sebagai user Lucya, untuk pendaftaran bisa menggunakan *!regis* |nama|no hp. Contoh: !regis |${pushname}|${serial.replace(/@c.us/g,'')}`, id)
+                    if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik !limit Untuk Mengecek Kuota Limit Kamu`, id)
 
-                await limitAdd(serial)
-                if (args.length === 1) return aksa.reply(dari, 'Kirim perintah *@smulestalk [@username]*\nContoh : *@smulestalk loli*', id)
-                arg = body.trim().split(' ')
-                console.log(...arg[1])
-                var slicedArgs = Array.prototype.slice.call(arg, 1);
-                console.log(slicedArgs)
-                const sstalk = await slicedArgs.join(' ')
-                console.log(sstalk)
-                try {
-                    const sstalk2 = await axios.get('https://api.vhtear.com/smuleprofile?query=' + sstalk + '&apikey=' + vhtear)
-                    const {
-                        username,
-                        full_name,
-                        follower,
-                        follow,
-                        biography,
-                        is_vip,
-                        picture,
-                        recording
-                    } = sstalk2.data.result
-                    const smule = `*User Ditemukan!*
+                    await limitAdd(serial)
+                    if (args.length === 1) return aksa.reply(dari, `Untuk mencari gambar di pinterest\nketik: !images [search]\ncontoh: !images naruto`, id)
+                    const cariwall = body.slice(8)
+                    const hasilwall = await images.fdci(cariwall)
+                    aksa.sendFileFromUrl(dari, hasilwall, '', '', id)
+                        .catch(() => {
+                            aksa.reply(dari, 'Ada yang eror!', id)
+                        })
+                    break
+
+                case `${prefix}smulestalk`:
+                    if (!isGroupMsg) return aksa.reply(dari, 'Perintah ini hanya bisa di gunakan dalam group!', id)
+                    if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik @limit Untuk Mengecek Kuota Limit Kamu`, id)
+
+                    await limitAdd(serial)
+                    if (args.length === 1) return aksa.reply(dari, 'Kirim perintah *@smulestalk [@username]*\nContoh : *@smulestalk loli*', id)
+                    arg = body.trim().split(' ')
+                    console.log(...arg[1])
+                    var slicedArgs = Array.prototype.slice.call(arg, 1);
+                    console.log(slicedArgs)
+                    const sstalk = await slicedArgs.join(' ')
+                    console.log(sstalk)
+                    try {
+                        const sstalk2 = await axios.get('https://api.vhtear.com/smuleprofile?query=' + sstalk + '&apikey=' + vhtear)
+                        const {
+                            username,
+                            full_name,
+                            follower,
+                            follow,
+                            biography,
+                            is_vip,
+                            picture,
+                            recording
+                        } = sstalk2.data.result
+                        const smule = `*User Ditemukan!*
 ➸ *Username:* ${username}
 ➸ *Full Name:* ${title}
 ➸ *Biografi:* ${biography}
@@ -4220,79 +4218,79 @@ ${Object.keys(me.phone).map(key => `${key} : ${me.phone[key]}`).join('\n')}`.sli
 ➸ *VIP*: ${is_vip}
 ➸ *Total Rekaman:* ${recording}`
 
-                    const pictk = await bent("buffer")(picture)
-                    const base64 = `data:image/jpg;base64,${pictk.toString("base64")}`
-                    aksa.sendImage(dari, base64, title, smule)
-                } catch (err) {
-                    console.error(err.message)
-                    await aksa.sendFileFromUrl(dari, errorurl2, 'error.png', '💔️ Maaf, User tidak ditemukan')
-                    aksa.sendText(ownerNumber, 'Error Smulestalk : ' + err)
-                }
-                break
-            case `${prefix}starmaker`:
-                if (!isGroupMsg) return aksa.reply(dari, 'Perintah ini hanya bisa di gunakan dalam group!', id)
-                if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik @limit Untuk Mengecek Kuota Limit Kamu`, id)
+                        const pictk = await bent("buffer")(picture)
+                        const base64 = `data:image/jpg;base64,${pictk.toString("base64")}`
+                        aksa.sendImage(dari, base64, title, smule)
+                    } catch (err) {
+                        console.error(err.message)
+                        await aksa.sendFileFromUrl(dari, errorurl2, 'error.png', '💔️ Maaf, User tidak ditemukan')
+                        aksa.sendText(ownerNumber, 'Error Smulestalk : ' + err)
+                    }
+                    break
+                case `${prefix}starmaker`:
+                    if (!isGroupMsg) return aksa.reply(dari, 'Perintah ini hanya bisa di gunakan dalam group!', id)
+                    if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik @limit Untuk Mengecek Kuota Limit Kamu`, id)
 
-                await limitAdd(serial)
-                if (args.length === 1) return aksa.reply(dari, 'Kirim perintah *@starmaker [linkStarmaker]* untuk contoh silahkan kirim perintah *@readme*')
-                arg = body.trim().split(' ')
-                console.log(...arg[1])
-                var slicedArgs = Array.prototype.slice.call(arg, 1);
-                console.log(slicedArgs)
-                const smkr = await slicedArgs.join(' ')
-                console.log(smkr)
-                try {
-                    const smkr2 = await axios.get('https://api.vhtear.com/starmakerdl?link=' + smkr + '&apikey=' + vhtear)
-                    const {
-                        image,
-                        desc,
-                        url,
-                        title
-                    } = smkr2.data.result
-                    const smkr3 = `*User Ditemukan!*
+                    await limitAdd(serial)
+                    if (args.length === 1) return aksa.reply(dari, 'Kirim perintah *@starmaker [linkStarmaker]* untuk contoh silahkan kirim perintah *@readme*')
+                    arg = body.trim().split(' ')
+                    console.log(...arg[1])
+                    var slicedArgs = Array.prototype.slice.call(arg, 1);
+                    console.log(slicedArgs)
+                    const smkr = await slicedArgs.join(' ')
+                    console.log(smkr)
+                    try {
+                        const smkr2 = await axios.get('https://api.vhtear.com/starmakerdl?link=' + smkr + '&apikey=' + vhtear)
+                        const {
+                            image,
+                            desc,
+                            url,
+                            title
+                        } = smkr2.data.result
+                        const smkr3 = `*User Ditemukan!*
 
 ➸ *Judul:* ${title}
 ➸ *Deskripsi:* ${desc}`
 
-                    const pictk = await bent("buffer")(image)
-                    const base64 = `data:image/jpg;base64,${pictk.toString("base64")}`
-                    aksa.sendImage(dari, base64, 'image.jpg', 'nihh mhank')
-                    aksa.sendFileFromUrl(dari, url, `${title}.mp4`, '', id)
-                } catch (err) {
-                    console.error(err.message)
-                    await aksa.sendFileFromUrl(dari, errorurl2, 'error.png', '💔️ Maaf, User tidak ditemukan')
-                    aksa.sendText(ownerNumber, 'Error Starmaker : ' + err)
-                }
-                break
-            case `${prefix}joox`:
-                if (!isRegis) return aksa.reply(dari, `Maaf ${pushname}, sepertinya kamu belum terdaftar sebagai user Lucya, untuk pendaftaran bisa menggunakan *!regis* |nama|no hp. Contoh: !regis |${pushname}|${serial.replace(/@c.us/g,'')}`, id)
-                if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik!limit Untuk Mengecek Kuota Limit Kamu `, id)
+                        const pictk = await bent("buffer")(image)
+                        const base64 = `data:image/jpg;base64,${pictk.toString("base64")}`
+                        aksa.sendImage(dari, base64, 'image.jpg', 'nihh mhank')
+                        aksa.sendFileFromUrl(dari, url, `${title}.mp4`, '', id)
+                    } catch (err) {
+                        console.error(err.message)
+                        await aksa.sendFileFromUrl(dari, errorurl2, 'error.png', '💔️ Maaf, User tidak ditemukan')
+                        aksa.sendText(ownerNumber, 'Error Starmaker : ' + err)
+                    }
+                    break
+                case `${prefix}joox`:
+                    if (!isRegis) return aksa.reply(dari, `Maaf ${pushname}, sepertinya kamu belum terdaftar sebagai user Lucya, untuk pendaftaran bisa menggunakan *!regis* |nama|no hp. Contoh: !regis |${pushname}|${serial.replace(/@c.us/g,'')}`, id)
+                    if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik!limit Untuk Mengecek Kuota Limit Kamu `, id)
 
-                await limitAdd(serial)
-                if (isMedialimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, kuota limit media kamu sudah habis, ketik !limed untuk mengecek kuota Limit media kamu`, id)
-                await MedialimitAdd(serial)
-                if (args.length === 1) return aksa.reply(dari, 'Kirim perintah *!joox [optional]*\nContoh : *!joox Alan Walker*', id)
-                aksa.reply(dari, mess.wait, id)
-                arg = body.trim().split(' ')
-                console.log(...arg[1])
-                var slicedArgs = Array.prototype.slice.call(arg, 1);
-                console.log(slicedArgs)
-                const music = await slicedArgs.join(' ')
-                console.log(music)
-                try {
-                    const music2 = await axios.get('https://api.vhtear.com/music?query=' + music + '&apikey=' + vhtear)
-                    const {
-                        penyanyi,
-                        judul,
-                        album,
-                        linkImg,
-                        linkMp3,
-                        filesize,
-                        ext,
-                        duration,
-                        lirik
-                    } = music2.data.result[0]
-                    const musik = ` * User Ditemukan! *
+                    await limitAdd(serial)
+                    if (isMedialimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, kuota limit media kamu sudah habis, ketik !limed untuk mengecek kuota Limit media kamu`, id)
+                    await MedialimitAdd(serial)
+                    if (args.length === 1) return aksa.reply(dari, 'Kirim perintah *!joox [optional]*\nContoh : *!joox Alan Walker*', id)
+                    aksa.reply(dari, mess.wait, id)
+                    arg = body.trim().split(' ')
+                    console.log(...arg[1])
+                    var slicedArgs = Array.prototype.slice.call(arg, 1);
+                    console.log(slicedArgs)
+                    const music = await slicedArgs.join(' ')
+                    console.log(music)
+                    try {
+                        const music2 = await axios.get('https://api.vhtear.com/music?query=' + music + '&apikey=' + vhtear)
+                        const {
+                            penyanyi,
+                            judul,
+                            album,
+                            linkImg,
+                            linkMp3,
+                            filesize,
+                            ext,
+                            duration,
+                            lirik
+                        } = music2.data.result[0]
+                        const musik = ` * User Ditemukan! *
 ➸ *Penyanyi: *${penyanyi}
 ➸ *Judul: *${judul}
 ➸ *Album: *${album}
@@ -4301,194 +4299,194 @@ ${Object.keys(me.phone).map(key => `${key} : ${me.phone[key]}`).join('\n')}`.sli
 ➸ *Durasi: *${duration}
 ➸ *Lirik: *${lirik}`
 
-                    const pictk = await bent("buffer")(linkImg)
-                    const base64 = `data:image/jpg;base64,${pictk.toString("base64")}`
-                    aksa.sendImage(dari, base64, judul, musik)
-                    aksa.sendFile(dari, linkMp3, `${judul}.mp3`, '', id)
-                } catch (err) {
-                    console.error(err.message)
-                    await aksa.sendFileFromUrl(dari, errorurl2, 'error.png', '💔️ Maaf, User tidak ditemukan')
-                    aksa.sendText(ownerNumber, 'Error Joox : ' + err)
-                }
-                break
-            case `${prefix}tiktok`:
-                if (!isRegis) return aksa.reply(dari, `Maaf ${pushname}, sepertinya kamu belum terdaftar sebagai user Lucya, untuk pendaftaran bisa menggunakan *!regis* |nama|no hp. Contoh: !regis |${pushname}|${serial.replace(/@c.us/g,'')}`, id)
-                if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik !limit Untuk Mengecek Kuota Limit Kamu`, id)
+                        const pictk = await bent("buffer")(linkImg)
+                        const base64 = `data:image/jpg;base64,${pictk.toString("base64")}`
+                        aksa.sendImage(dari, base64, judul, musik)
+                        aksa.sendFile(dari, linkMp3, `${judul}.mp3`, '', id)
+                    } catch (err) {
+                        console.error(err.message)
+                        await aksa.sendFileFromUrl(dari, errorurl2, 'error.png', '💔️ Maaf, User tidak ditemukan')
+                        aksa.sendText(ownerNumber, 'Error Joox : ' + err)
+                    }
+                    break
+                case `${prefix}tiktok`:
+                    if (!isRegis) return aksa.reply(dari, `Maaf ${pushname}, sepertinya kamu belum terdaftar sebagai user Lucya, untuk pendaftaran bisa menggunakan *!regis* |nama|no hp. Contoh: !regis |${pushname}|${serial.replace(/@c.us/g,'')}`, id)
+                    if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik !limit Untuk Mengecek Kuota Limit Kamu`, id)
 
-                await limitAdd(serial)
-                if (isMedialimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, kuota limit media kamu sudah habis, ketik !limed untuk mengecek kuota Limit media kamu`, id)
-                await MedialimitAdd(serial)
-                if (args.length === 1) return aksa.reply(dari, 'Kirim perintah *!tiktok [linkTiktok]*\nContoh : *!tiktok https://vt.tiktok.com/yqyjPX/*', id)
-                try {
-                    aksa.reply(dari, mess.wait, id)
-                    const resp = await axios.get('https://api.vhtear.com/tiktokdl?link=' + body.slice(8) + '&apikey=' + vhtear)
-                    const {
-                        video,
-                        title,
-                        duration,
-                        image,
-                        desk,
-                        dibuat
-                    } = resp.data.result
-                    const capss = `*Video Ditemukan!*
+                    await limitAdd(serial)
+                    if (isMedialimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, kuota limit media kamu sudah habis, ketik !limed untuk mengecek kuota Limit media kamu`, id)
+                    await MedialimitAdd(serial)
+                    if (args.length === 1) return aksa.reply(dari, 'Kirim perintah *!tiktok [linkTiktok]*\nContoh : *!tiktok https://vt.tiktok.com/yqyjPX/*', id)
+                    try {
+                        aksa.reply(dari, mess.wait, id)
+                        const resp = await axios.get('https://api.vhtear.com/tiktokdl?link=' + body.slice(8) + '&apikey=' + vhtear)
+                        const {
+                            video,
+                            title,
+                            duration,
+                            image,
+                            desk,
+                            dibuat
+                        } = resp.data.result
+                        const capss = `*Video Ditemukan!*
 ➸ Judul : ${title}
 ➸ Deskripsi : ${desk}
 ➸ Durasi : ${duration}
 ➸ Dibuat : ${dibuat}`
-                    aksa.sendFileFromUrl(dari, video, `tiktok.mp4`, capss, id)
-                } catch (err) {
-                    console.error(err.message)
-                    await aksa.sendFileFromUrl(dari, errorurl, 'error.png', '💔️ Maaf, Video tidak ditemukan')
-                    aksa.sendText(ownerNumber, 'Tiktok Error : ' + err)
-                }
-                break
-            case `${prefix}igstalk`:
-                if (!isRegis) return aksa.reply(dari, `Maaf ${pushname}, sepertinya kamu belum terdaftar sebagai user Lucya, untuk pendaftaran bisa menggunakan *!regis* |nama|no hp. Contoh: !regis |${pushname}|${serial.replace(/@c.us/g,'')}`, id)
-                if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik !limit Untuk Mengecek Kuota Limit Kamu`, id)
+                        aksa.sendFileFromUrl(dari, video, `tiktok.mp4`, capss, id)
+                    } catch (err) {
+                        console.error(err.message)
+                        await aksa.sendFileFromUrl(dari, errorurl, 'error.png', '💔️ Maaf, Video tidak ditemukan')
+                        aksa.sendText(ownerNumber, 'Tiktok Error : ' + err)
+                    }
+                    break
+                case `${prefix}igstalk`:
+                    if (!isRegis) return aksa.reply(dari, `Maaf ${pushname}, sepertinya kamu belum terdaftar sebagai user Lucya, untuk pendaftaran bisa menggunakan *!regis* |nama|no hp. Contoh: !regis |${pushname}|${serial.replace(/@c.us/g,'')}`, id)
+                    if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik !limit Untuk Mengecek Kuota Limit Kamu`, id)
 
-                await limitAdd(serial)
-                if (args.length === 1) return aksa.reply(dari, 'Kirim perintah *!igStalk @username*\nContoh *!igStalk @bdrsmsdn*', id)
-                try {
-                    const stalk = await get.get(`https://api.vhtear.com/igprofile?query=${args[1]}&apikey=${vhtear}`).json()
-                    if (stalk.error) return aksa.reply(dari, stalk.error, id)
+                    await limitAdd(serial)
+                    if (args.length === 1) return aksa.reply(dari, 'Kirim perintah *!igStalk @username*\nContoh *!igStalk @bdrsmsdn*', id)
+                    try {
+                        const stalk = await get.get(`https://api.vhtear.com/igprofile?query=${args[1]}&apikey=${vhtear}`).json()
+                        if (stalk.error) return aksa.reply(dari, stalk.error, id)
+                        const {
+                            username,
+                            full_name,
+                            follower,
+                            follow,
+                            biography,
+                            is_private,
+                            picture,
+                            post_count
+                        } = stalk.result
+                        const caps = `「 IGSTALK 」\n\n➸ *Nama* : ${full_name}\n➸ *Username* : ${username}\n➸ *Jumlah Followers* : ${follower}\n➸ *Jumlah Following* : ${follow}\n➸ *Jumlah Postingan* : ${post_count}\n➸ *Biodata* : ${biography}\n➸ *Private* : ${is_private}\n\n-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-\n\n${donate()}`
+                        await aksa.sendFileFromUrl(dari, picture, 'Profile.jpg', caps, id)
+                    } catch (err) {
+                        console.error(err.message)
+                        aksa.sendText(ownerNumber, 'IGSTALK Error : ' + err)
+                    }
+                    break
+                case `${prefix}twstalk`:
+                    if (!isRegis) return aksa.reply(dari, `Maaf ${pushname}, sepertinya kamu belum terdaftar sebagai user Lucya, untuk pendaftaran bisa menggunakan *!regis* |nama|no hp. Contoh: !regis |${pushname}|${serial.replace(/@c.us/g,'')}`, id)
+                    if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik !limit Untuk Mengecek Kuota Limit Kamu`, id)
+
+                    await limitAdd(serial)
+                    if (args.length === 1) return aksa.reply(dari, 'Kirim perintah *!twstalk @username*\nContoh *!twstalk @bdrsmsdn*', id)
+                    const twstalk = await get.get(`https://mhankbarbars.herokuapp.com/api/twstalk?username=${args[1]}&apiKey=${apiKey}`).json()
+                    if (twstalk.error) return aksa.reply(dari, twstalk.error, id)
                     const {
-                        username,
-                        full_name,
-                        follower,
-                        follow,
-                        biography,
-                        is_private,
-                        picture,
-                        post_count
-                    } = stalk.result
-                    const caps = `「 IGSTALK 」\n\n➸ *Nama* : ${full_name}\n➸ *Username* : ${username}\n➸ *Jumlah Followers* : ${follower}\n➸ *Jumlah Following* : ${follow}\n➸ *Jumlah Postingan* : ${post_count}\n➸ *Biodata* : ${biography}\n➸ *Private* : ${is_private}\n\n-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-\n\n${donate()}`
-                    await aksa.sendFileFromUrl(dari, picture, 'Profile.jpg', caps, id)
-                } catch (err) {
-                    console.error(err.message)
-                    aksa.sendText(ownerNumber, 'IGSTALK Error : ' + err)
-                }
-                break
-            case `${prefix}twstalk`:
-                if (!isRegis) return aksa.reply(dari, `Maaf ${pushname}, sepertinya kamu belum terdaftar sebagai user Lucya, untuk pendaftaran bisa menggunakan *!regis* |nama|no hp. Contoh: !regis |${pushname}|${serial.replace(/@c.us/g,'')}`, id)
-                if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik !limit Untuk Mengecek Kuota Limit Kamu`, id)
+                        idd, followers_count, name, full_name, status_count, profile_pic
+                    } = twstalk
+                    const twcaps = `➸ *ID* : ${idd}\n➸*Nama Lengkap* : ${full_name}\n➸ *Nama* : ${name}\n➸ *Jumlah Followers* : ${followers_count}\n➸ *Jumlah Tweet* : ${status_count}\n\n-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-\n\n${donate()}`
+                    await aksa.sendFileFromUrl(dari, profile_pic, 'Profile.jpg', twcaps, id)
+                    break
 
-                await limitAdd(serial)
-                if (args.length === 1) return aksa.reply(dari, 'Kirim perintah *!twstalk @username*\nContoh *!twstalk @bdrsmsdn*', id)
-                const twstalk = await get.get(`https://mhankbarbars.herokuapp.com/api/twstalk?username=${args[1]}&apiKey=${apiKey}`).json()
-                if (twstalk.error) return aksa.reply(dari, twstalk.error, id)
-                const {
-                    idd, followers_count, name, full_name, status_count, profile_pic
-                } = twstalk
-                const twcaps = `➸ *ID* : ${idd}\n➸*Nama Lengkap* : ${full_name}\n➸ *Nama* : ${name}\n➸ *Jumlah Followers* : ${followers_count}\n➸ *Jumlah Tweet* : ${status_count}\n\n-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-\n\n${donate()}`
-                await aksa.sendFileFromUrl(dari, profile_pic, 'Profile.jpg', twcaps, id)
-                break
+                    //tools menu----------------------------------------------------------------------------------------------------
 
-                //tools menu----------------------------------------------------------------------------------------------------
+                case `${prefix}resi`:
+                case `${prefix}cekresi`:
+                    if (!isRegis) return aksa.reply(dari, `Maaf ${pushname}, sepertinya kamu belum terdaftar sebagai user Lucya, untuk pendaftaran bisa menggunakan *!regis* |nama|no hp. Contoh: !regis |${pushname}|${serial.replace(/@c.us/g,'')}`, id)
+                    if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik !limit Untuk Mengecek Kuota Limit Kamu`, id)
 
-            case `${prefix}resi`:
-            case `${prefix}cekresi`:
-                if (!isRegis) return aksa.reply(dari, `Maaf ${pushname}, sepertinya kamu belum terdaftar sebagai user Lucya, untuk pendaftaran bisa menggunakan *!regis* |nama|no hp. Contoh: !regis |${pushname}|${serial.replace(/@c.us/g,'')}`, id)
-                if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik !limit Untuk Mengecek Kuota Limit Kamu`, id)
+                    await limitAdd(serial)
+                    if (args.length === 1) return aksa.reply(dari, `Maaf, format pesan salah.\nSilahkan ketik pesan dengan !resi <kurir> <no_resi>\n\nKurir yang tersedia:\njne, pos, tiki, wahana, jnt, rpx, sap, sicepat, pcp, jet, dse, first, ninja, lion, idl, rex`, id)
+                    const kurirs = ['jne', 'pos', 'tiki', 'wahana', 'jnt', 'rpx', 'sap', 'sicepat', 'pcp', 'jet', 'dse', 'first', 'ninja', 'lion', 'idl', 'rex']
+                    if (!kurirs.includes(args[1])) return aksa.sendText(dari, `Maaf, jenis ekspedisi pengiriman tidak didukung layanan ini hanya mendukung ekspedisi pengiriman ${kurirs.join(', ')} Tolong periksa kembali.`)
+                    console.log('Memeriksa No Resi', args[2], 'dengan ekspedisi', args[1])
+                    cekResi(args[1], args[2]).then((result) => aksa.sendText(dari, result))
+                    break
+                case `${prefix}shortlink`:
+                    if (!isRegis) return aksa.reply(dari, `Maaf ${pushname}, sepertinya kamu belum terdaftar sebagai user Lucya, untuk pendaftaran bisa menggunakan *!regis* |nama|no hp. Contoh: !regis |${pushname}|${serial.replace(/@c.us/g,'')}`, id)
+                    if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik !limit Untuk Mengecek Kuota Limit Kamu`, id)
 
-                await limitAdd(serial)
-                if (args.length === 1) return aksa.reply(dari, `Maaf, format pesan salah.\nSilahkan ketik pesan dengan !resi <kurir> <no_resi>\n\nKurir yang tersedia:\njne, pos, tiki, wahana, jnt, rpx, sap, sicepat, pcp, jet, dse, first, ninja, lion, idl, rex`, id)
-                const kurirs = ['jne', 'pos', 'tiki', 'wahana', 'jnt', 'rpx', 'sap', 'sicepat', 'pcp', 'jet', 'dse', 'first', 'ninja', 'lion', 'idl', 'rex']
-                if (!kurirs.includes(args[1])) return aksa.sendText(dari, `Maaf, jenis ekspedisi pengiriman tidak didukung layanan ini hanya mendukung ekspedisi pengiriman ${kurirs.join(', ')} Tolong periksa kembali.`)
-                console.log('Memeriksa No Resi', args[2], 'dengan ekspedisi', args[1])
-                cekResi(args[1], args[2]).then((result) => aksa.sendText(dari, result))
-                break
-            case `${prefix}shortlink`:
-                if (!isRegis) return aksa.reply(dari, `Maaf ${pushname}, sepertinya kamu belum terdaftar sebagai user Lucya, untuk pendaftaran bisa menggunakan *!regis* |nama|no hp. Contoh: !regis |${pushname}|${serial.replace(/@c.us/g,'')}`, id)
-                if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik !limit Untuk Mengecek Kuota Limit Kamu`, id)
+                    await limitAdd(serial)
+                    if (args.length === 1) return aksa.reply(dari, `ketik !shortlink <url>`, id)
+                    if (!args[1].match(isUrl)) return aksa.reply(dari, 'Maaf, url yang kamu kirim tidak valid.', id)
+                    const shortlink = await urlShortener(args[1])
+                    await aksa.sendText(dari, shortlink)
+                        .catch(() => {
+                            aksa.reply(dari, 'Ada yang eror!', id)
+                        })
+                    break
+                case `${prefix}url2img`:
+                    if (!isRegis) return aksa.reply(dari, `Maaf ${pushname}, sepertinya kamu belum terdaftar sebagai user Lucya, untuk pendaftaran bisa menggunakan *!regis* |nama|no hp. Contoh: !regis |${pushname}|${serial.replace(/@c.us/g,'')}`, id)
+                    if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik !limit Untuk Mengecek Kuota Limit Kamu`, id)
 
-                await limitAdd(serial)
-                if (args.length === 1) return aksa.reply(dari, `ketik !shortlink <url>`, id)
-                if (!args[1].match(isUrl)) return aksa.reply(dari, 'Maaf, url yang kamu kirim tidak valid.', id)
-                const shortlink = await urlShortener(args[1])
-                await aksa.sendText(dari, shortlink)
-                    .catch(() => {
-                        aksa.reply(dari, 'Ada yang eror!', id)
-                    })
-                break
-            case `${prefix}url2img`:
-                if (!isRegis) return aksa.reply(dari, `Maaf ${pushname}, sepertinya kamu belum terdaftar sebagai user Lucya, untuk pendaftaran bisa menggunakan *!regis* |nama|no hp. Contoh: !regis |${pushname}|${serial.replace(/@c.us/g,'')}`, id)
-                if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik !limit Untuk Mengecek Kuota Limit Kamu`, id)
+                    await limitAdd(serial)
+                    const _query = body.slice(9)
+                    if (!_query.match(isUrl)) return aksa.reply(dari, mess.error.Iv, id)
+                    if (args.length === 1) return aksa.reply(dari, 'Kirim perintah *!url2img <web>*\nContoh *!url2img https://google.com*', id)
+                    const url2img = await get.get(`https://mhankbarbars.herokuapp.com/api/url2image?url=${_query}&apiKey=${apiKey}`).json()
+                    if (url2img.error) return aksa.reply(dari, url2img.error, id)
+                    aksa.sendFileFromUrl(dari, url2img.result, 'kyaa.jpg', null, id)
+                    break
+                case `${prefix}maps`:
+                    if (!isGroupMsg) return aksa.reply(dari, 'Perintah ini hanya bisa di gunakan dalam group!', id)
+                    if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik @limit Untuk Mengecek Kuota Limit Kamu`, id)
 
-                await limitAdd(serial)
-                const _query = body.slice(9)
-                if (!_query.match(isUrl)) return aksa.reply(dari, mess.error.Iv, id)
-                if (args.length === 1) return aksa.reply(dari, 'Kirim perintah *!url2img <web>*\nContoh *!url2img https://google.com*', id)
-                const url2img = await get.get(`https://mhankbarbars.herokuapp.com/api/url2image?url=${_query}&apiKey=${apiKey}`).json()
-                if (url2img.error) return aksa.reply(dari, url2img.error, id)
-                aksa.sendFileFromUrl(dari, url2img.result, 'kyaa.jpg', null, id)
-                break
-            case `${prefix}maps`:
-                if (!isGroupMsg) return aksa.reply(dari, 'Perintah ini hanya bisa di gunakan dalam group!', id)
-                if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik @limit Untuk Mengecek Kuota Limit Kamu`, id)
+                    await limitAdd(serial)
+                    if (args.length === 1) return aksa.reply(dari, 'Kirim perintah *@maps [optional]*, Contoh : *@maps Jakarta*')
+                    arg = body.trim().split(' ')
+                    console.log(...arg[1])
+                    var slicedArgs = Array.prototype.slice.call(arg, 1);
+                    console.log(slicedArgs)
+                    const mapz = await slicedArgs.join(' ')
+                    console.log(mapz)
+                    try {
+                        const mapz2 = await axios.get('https://mnazria.herokuapp.com/api/maps?search=' + mapz)
+                        const {
+                            gambar
+                        } = mapz2.data
+                        const pictk = await bent("buffer")(gambar)
+                        const base64 = `data:image/jpg;base64,${pictk.toString("base64")}`
+                        aksa.sendImage(dari, base64, 'maps.jpg', `*Hasil Maps : ${mapz}*`)
+                    } catch (err) {
+                        console.error(err.message)
+                        await aksa.sendFileFromUrl(dari, errorurl2, 'error.png', '💔️ Maaf, User tidak ditemukan')
+                        aksa.sendText(ownerNumber, 'Error Maps : ' + err)
+                    }
+                    break
+                case `${prefix}translate`:
+                    if (!isRegis) return aksa.reply(dari, `Maaf ${pushname}, sepertinya kamu belum terdaftar sebagai user Lucya, untuk pendaftaran bisa menggunakan *!regis* |nama|no hp. Contoh: !regis |${pushname}|${serial.replace(/@c.us/g,'')}`, id)
+                    if (args[1] == undefined || args[2] == undefined) return
+                    if (args.length >= 2) {
+                        var codelang = args[1]
+                        var text = body.slice(11 + codelang.length);
+                        translatte(text, {
+                            to: codelang
+                        }).then(res => {
+                            aksa.sendText(dari, res.text);
+                        }).catch(err => {
+                            aksa.sendText(dari, `[ERROR] Teks tidak ada, atau kode bahasa ${codelang} tidak support\n~> *!bahasa* untuk melihat list kode bahasa`);
+                        });
+                    }
+                    break
+                case `${prefix}checkip`:
+                    if (!isGroupMsg) return aksa.reply(dari, 'Perintah ini hanya bisa di gunakan dalam group!', id)
+                    if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik @limit Untuk Mengecek Kuota Limit Kamu`, id)
 
-                await limitAdd(serial)
-                if (args.length === 1) return aksa.reply(dari, 'Kirim perintah *@maps [optional]*, Contoh : *@maps Jakarta*')
-                arg = body.trim().split(' ')
-                console.log(...arg[1])
-                var slicedArgs = Array.prototype.slice.call(arg, 1);
-                console.log(slicedArgs)
-                const mapz = await slicedArgs.join(' ')
-                console.log(mapz)
-                try {
-                    const mapz2 = await axios.get('https://mnazria.herokuapp.com/api/maps?search=' + mapz)
-                    const {
-                        gambar
-                    } = mapz2.data
-                    const pictk = await bent("buffer")(gambar)
-                    const base64 = `data:image/jpg;base64,${pictk.toString("base64")}`
-                    aksa.sendImage(dari, base64, 'maps.jpg', `*Hasil Maps : ${mapz}*`)
-                } catch (err) {
-                    console.error(err.message)
-                    await aksa.sendFileFromUrl(dari, errorurl2, 'error.png', '💔️ Maaf, User tidak ditemukan')
-                    aksa.sendText(ownerNumber, 'Error Maps : ' + err)
-                }
-                break
-            case `${prefix}translate`:
-                if (!isRegis) return aksa.reply(dari, `Maaf ${pushname}, sepertinya kamu belum terdaftar sebagai user Lucya, untuk pendaftaran bisa menggunakan *!regis* |nama|no hp. Contoh: !regis |${pushname}|${serial.replace(/@c.us/g,'')}`, id)
-                if (args[1] == undefined || args[2] == undefined) return
-                if (args.length >= 2) {
-                    var codelang = args[1]
-                    var text = body.slice(11 + codelang.length);
-                    translatte(text, {
-                        to: codelang
-                    }).then(res => {
-                        aksa.sendText(dari, res.text);
-                    }).catch(err => {
-                        aksa.sendText(dari, `[ERROR] Teks tidak ada, atau kode bahasa ${codelang} tidak support\n~> *!bahasa* untuk melihat list kode bahasa`);
-                    });
-                }
-                break
-            case `${prefix}checkip`:
-                if (!isGroupMsg) return aksa.reply(dari, 'Perintah ini hanya bisa di gunakan dalam group!', id)
-                if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik @limit Untuk Mengecek Kuota Limit Kamu`, id)
-
-                await limitAdd(serial)
-                if (args.length === 1) return aksa.reply(dari, 'Kirim perintah *@checkip [ipaddress]*\nContoh : *@checkip 182.0.144.145*', id)
-                aksa.reply(dari, mess.wait, id)
-                arg = body.trim().split(' ')
-                console.log(...arg[1])
-                var slicedArgs = Array.prototype.slice.call(arg, 1);
-                console.log(slicedArgs)
-                const cekip = await slicedArgs.join(' ')
-                console.log(cekip)
-                try {
-                    const cekip2 = await axios.get('https://mnazria.herokuapp.com/api/check?ip=' + cekip)
-                    const {
-                        city,
-                        continent_name,
-                        country_name,
-                        ip,
-                        latitude,
-                        location,
-                        longitude,
-                        region_name
-                    } = cekip2.data
-                    const cekip3 = `*User Ditemukan!*
+                    await limitAdd(serial)
+                    if (args.length === 1) return aksa.reply(dari, 'Kirim perintah *@checkip [ipaddress]*\nContoh : *@checkip 182.0.144.145*', id)
+                    aksa.reply(dari, mess.wait, id)
+                    arg = body.trim().split(' ')
+                    console.log(...arg[1])
+                    var slicedArgs = Array.prototype.slice.call(arg, 1);
+                    console.log(slicedArgs)
+                    const cekip = await slicedArgs.join(' ')
+                    console.log(cekip)
+                    try {
+                        const cekip2 = await axios.get('https://mnazria.herokuapp.com/api/check?ip=' + cekip)
+                        const {
+                            city,
+                            continent_name,
+                            country_name,
+                            ip,
+                            latitude,
+                            location,
+                            longitude,
+                            region_name
+                        } = cekip2.data
+                        const cekip3 = `*User Ditemukan!*
 
 ➸ *Kota:* ${city}
 ➸ *Benua:* ${continent_name}
@@ -4501,266 +4499,266 @@ ${Object.keys(me.phone).map(key => `${key} : ${me.phone[key]}`).join('\n')}`.sli
 ➸ *Garis Bujur:* ${longitude}
 ➸ *Wilayah:* +${region_name}`
 
-                    const pictk = await bent("buffer")(location.country_flag)
-                    const base64 = `data:image/jpg;base64,${pictk.toString("base64")}`
-                    aksa.sendImage(dari, base64, city, cekip3)
-                } catch (err) {
-                    console.error(err.message)
-                    await aksa.sendFileFromUrl(dari, errorurl2, 'error.png', '💔️ Maaf, User tidak ditemukan')
-                    aksa.sendText(ownerNumber, 'Error Check IP : ' + err)
-                }
-                break
-            case `${prefix}imgcompress`:
-                if (!isRegis) return aksa.reply(dari, `Maaf ${pushname}, sepertinya kamu belum terdaftar sebagai user Lucya, untuk pendaftaran bisa menggunakan *!regis* |nama|no hp. Contoh: !regis |${pushname}|${serial.replace(/@c.us/g,'')}`, id)
-                if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik !limit Untuk Mengecek Kuota Limit Kamu`, id)
-                await limitAdd(serial)
-                if (isMedia) {
-                    const gambar = await decryptMedia(message, uaOverride)
-                    await processImg(gambar)
-                } else if (quotedMsg && quotedMsg.type == 'image') {
-                    const compres = await decryptMedia(quotedMsg)
-                    await processImg(compres)
-                } else {
-                    aksa.sendText(dari, `Tidak ada gambar! untuk !compress kirim gambar dengan caption !compress`)
-                }
-                async function processImg(gambar) {
-                    let image = await Jimp.read(gambar);
-                    image.quality(55).write('./quote/compressed.jpeg', function (err) {
-                        if (err) console.log(err);
-                        aksa.sendFile(dari, './quote/compressed.jpeg', 'compressed.jpg', '_*Processing Sukses!');
-                    });
-                }
-                break
-            case `${prefix}jarak`:
-                if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik !limit Untuk Mengecek Kuota Limit Kamu`, id)
+                        const pictk = await bent("buffer")(location.country_flag)
+                        const base64 = `data:image/jpg;base64,${pictk.toString("base64")}`
+                        aksa.sendImage(dari, base64, city, cekip3)
+                    } catch (err) {
+                        console.error(err.message)
+                        await aksa.sendFileFromUrl(dari, errorurl2, 'error.png', '💔️ Maaf, User tidak ditemukan')
+                        aksa.sendText(ownerNumber, 'Error Check IP : ' + err)
+                    }
+                    break
+                case `${prefix}imgcompress`:
+                    if (!isRegis) return aksa.reply(dari, `Maaf ${pushname}, sepertinya kamu belum terdaftar sebagai user Lucya, untuk pendaftaran bisa menggunakan *!regis* |nama|no hp. Contoh: !regis |${pushname}|${serial.replace(/@c.us/g,'')}`, id)
+                    if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik !limit Untuk Mengecek Kuota Limit Kamu`, id)
+                    await limitAdd(serial)
+                    if (isMedia) {
+                        const gambar = await decryptMedia(message, uaOverride)
+                        await processImg(gambar)
+                    } else if (quotedMsg && quotedMsg.type == 'image') {
+                        const compres = await decryptMedia(quotedMsg)
+                        await processImg(compres)
+                    } else {
+                        aksa.sendText(dari, `Tidak ada gambar! untuk !compress kirim gambar dengan caption !compress`)
+                    }
+                    async function processImg(gambar) {
+                        let image = await Jimp.read(gambar);
+                        image.quality(55).write('./quote/compressed.jpeg', function (err) {
+                            if (err) console.log(err);
+                            aksa.sendFile(dari, './quote/compressed.jpeg', 'compressed.jpg', '_*Processing Sukses!');
+                        });
+                    }
+                    break
+                case `${prefix}jarak`:
+                    if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik !limit Untuk Mengecek Kuota Limit Kamu`, id)
 
-                await limitAdd(serial)
-                arg = body.trim().split('|')
-                const jar = arg[1]
-                const rak = arg[2]
-                try {
-                    const resp = await axios.get(`https://api.vhtear.com/distance?from=${jar}&to=${rak}&apikey=${vhtear}`)
-                    if (resp.data.error) return aksa.reply(dari, resp.data.error, id)
-                    const kbbuaw = `➸ ${resp.data.result.data}`
-                    aksa.reply(dari, kbbuaw, id)
-                } catch (err) {
-                    console.error(err.message)
-                    await aksa.sendFileFromUrl(dari, errorurl2, 'error.png', '💔️ Maaf, tidak ditemukan')
-                    aksa.sendText(ownerNumber, 'Jarak Error : ' + err)
-                }
-                break
-            case `${prefix}spek`:
-                if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik !limit Untuk Mengecek Kuota Limit Kamu`, id)
+                    await limitAdd(serial)
+                    arg = body.trim().split('|')
+                    const jar = arg[1]
+                    const rak = arg[2]
+                    try {
+                        const resp = await axios.get(`https://api.vhtear.com/distance?from=${jar}&to=${rak}&apikey=${vhtear}`)
+                        if (resp.data.error) return aksa.reply(dari, resp.data.error, id)
+                        const kbbuaw = `➸ ${resp.data.result.data}`
+                        aksa.reply(dari, kbbuaw, id)
+                    } catch (err) {
+                        console.error(err.message)
+                        await aksa.sendFileFromUrl(dari, errorurl2, 'error.png', '💔️ Maaf, tidak ditemukan')
+                        aksa.sendText(ownerNumber, 'Jarak Error : ' + err)
+                    }
+                    break
+                case `${prefix}spek`:
+                    if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik !limit Untuk Mengecek Kuota Limit Kamu`, id)
 
-                await limitAdd(serial)
-                const hpnya = body.slice(6)
-                try {
-                    const resp = await axios.get(`https://api.vhtear.com/gsmarena?query=${hpnya}&apikey=${vhtear}`)
-                    if (resp.data.error) return aksa.reply(dari, resp.data.error, id)
-                    const kbbuaww = `➸ ${resp.data.result.spec}`
-                    aksa.sendFileFromUrl(dari, resp.data.result.image, 'gsm.jpg', kbbuaww, id)
-                } catch (err) {
-                    console.error(err.message)
-                    await aksa.sendFileFromUrl(dari, errorurl2, 'error.png', '💔️ Maaf, tidak ditemukan')
-                    aksa.sendText(ownerNumber, 'Spek Error : ' + err)
-                }
-                break
-            case `${prefix}motor`:
-                if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik !limit Untuk Mengecek Kuota Limit Kamu`, id)
+                    await limitAdd(serial)
+                    const hpnya = body.slice(6)
+                    try {
+                        const resp = await axios.get(`https://api.vhtear.com/gsmarena?query=${hpnya}&apikey=${vhtear}`)
+                        if (resp.data.error) return aksa.reply(dari, resp.data.error, id)
+                        const kbbuaww = `➸ ${resp.data.result.spec}`
+                        aksa.sendFileFromUrl(dari, resp.data.result.image, 'gsm.jpg', kbbuaww, id)
+                    } catch (err) {
+                        console.error(err.message)
+                        await aksa.sendFileFromUrl(dari, errorurl2, 'error.png', '💔️ Maaf, tidak ditemukan')
+                        aksa.sendText(ownerNumber, 'Spek Error : ' + err)
+                    }
+                    break
+                case `${prefix}motor`:
+                    if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik !limit Untuk Mengecek Kuota Limit Kamu`, id)
 
-                await limitAdd(serial)
-                const mtr = body.slice(7)
-                try {
-                    const resp = await axios.get(`https://api.vhtear.com/infomotor?merk=${mtr}&apikey=${vhtear}`)
-                    if (resp.data.error) return aksa.reply(dari, resp.data.error, id)
-                    const kbbuaww = `➸ *Title* : ${resp.data.result.title}\n➸ *Harga* : ${resp.data.result.harga}\n➸ *Spesifikasi* : ${resp.data.result.spesifikasi}\n➸ *Kelebihan* : ${resp.data.result.kelebihan}\n➸ *Kekurangan* : ${resp.data.result.kekurangan}`
-                    aksa.sendFileFromUrl(dari, resp.data.result.image, 'gsm.jpg', kbbuaww, id)
-                } catch (err) {
-                    console.error(err.message)
-                    await aksa.sendFileFromUrl(dari, errorurl2, 'error.png', '💔️ Maaf, tidak ditemukan')
-                    aksa.sendText(ownerNumber, 'Motor Error : ' + err)
-                }
-                break
-            case `${prefix}mobil`:
-                if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik !limit Untuk Mengecek Kuota Limit Kamu`, id)
+                    await limitAdd(serial)
+                    const mtr = body.slice(7)
+                    try {
+                        const resp = await axios.get(`https://api.vhtear.com/infomotor?merk=${mtr}&apikey=${vhtear}`)
+                        if (resp.data.error) return aksa.reply(dari, resp.data.error, id)
+                        const kbbuaww = `➸ *Title* : ${resp.data.result.title}\n➸ *Harga* : ${resp.data.result.harga}\n➸ *Spesifikasi* : ${resp.data.result.spesifikasi}\n➸ *Kelebihan* : ${resp.data.result.kelebihan}\n➸ *Kekurangan* : ${resp.data.result.kekurangan}`
+                        aksa.sendFileFromUrl(dari, resp.data.result.image, 'gsm.jpg', kbbuaww, id)
+                    } catch (err) {
+                        console.error(err.message)
+                        await aksa.sendFileFromUrl(dari, errorurl2, 'error.png', '💔️ Maaf, tidak ditemukan')
+                        aksa.sendText(ownerNumber, 'Motor Error : ' + err)
+                    }
+                    break
+                case `${prefix}mobil`:
+                    if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik !limit Untuk Mengecek Kuota Limit Kamu`, id)
 
-                await limitAdd(serial)
-                const mbl = body.slice(7)
-                try {
-                    const resp = await axios.get(`https://api.vhtear.com/infomobil?merk=${mbl}&apikey=${vhtear}`)
-                    if (resp.data.error) return aksa.reply(dari, resp.data.error, id)
-                    const kbbuaww = `➸ *Title* : ${resp.data.result.title}\n➸ *Harga* : ${resp.data.result.harga}\n➸ *Spesifikasi* : ${resp.data.result.spesifikasi}\n➸ *Kelebihan* : ${resp.data.result.kelebihan}\n➸ *Kekurangan* : ${resp.data.result.kekurangan}`
-                    aksa.sendFileFromUrl(dari, resp.data.result.image, 'gsm.jpg', kbbuaww, id)
-                } catch (err) {
-                    console.error(err.message)
-                    await aksa.sendFileFromUrl(dari, errorurl2, 'error.png', '💔️ Maaf, tidak ditemukan')
-                    aksa.sendText(ownerNumber, 'Mobil Error : ' + err)
-                }
-                break
-                //words
-            case `lucya`:
-            case `luu`:
-            case `lucyaa`:
-            case `lulu`:
-            case `luluu`:
-                let blsn = jwb[Math.floor(Math.random() * jwb.length)]
-                aksa.reply(dari, blsn, id)
-                break
-            case `assalamualaikum`:
-            case `asalamualaikum`:
-            case `assalamu\'alaikum`:
-                if (args.length === 1) return aksa.reply(dari, `Waalaikumsalam ${pushname}:)`)
-                break
-            case `${prefix}hitung`:
-                if (!isRegis) return aksa.reply(dari, `Maaf ${pushname}, sepertinya kamu belum terdaftar sebagai user Lucya, untuk pendaftaran bisa menggunakan *!regis* |nama|no hp. Contoh: !regis |${pushname}|${serial.replace(/@c.us/g,'')}`, id)
-                if (args.length === 1) return aksa.reply(dari, '[❗] Kirim perintah *!hitung [ Angka ]*\nContoh : !hitung 12*12\n*NOTE* :\n- Untuk Perkalian Menggunakan *\n- Untuk Pertambahan Menggunakan +\n- Untuk Pengurangan Mennggunakan -\n- Untuk Pembagian Menggunakan /')
-                const mtk = body.slice(8)
-                if (typeof Math_js.evaluate(mtk) !== "number") {
-                    aksa.reply(dari, `"${mtk}", bukan angka!\n[❗] Kirim perintah *!hitung [ Angka ]*\nContoh : !hitung 12*12\n*NOTE* :\n- Untuk Perkalian Menggunakan *\n- Untuk Pertambahan Menggunakan +\n- Untuk Pengurangan Mennggunakan -\n- Untuk Pembagian Menggunakan /`, id)
-                } else {
-                    aksa.reply(dari, `*「 MATH 」*\n\n*Kalkulator*\n${mtk} = ${Math_js.evaluate(mtk)}`, id)
-                }
-                break
-            case `p`:
-            case `helo`:
-            case `hai`:
-            case `halo`:
-            case `bot`:
-            case `hi`:
-            case `hallo`:
-            case `wey`:
-            case `woy`:
-                if (args.length === 1) return aksa.reply(dari, `Hai, *${pushname}!*👋
+                    await limitAdd(serial)
+                    const mbl = body.slice(7)
+                    try {
+                        const resp = await axios.get(`https://api.vhtear.com/infomobil?merk=${mbl}&apikey=${vhtear}`)
+                        if (resp.data.error) return aksa.reply(dari, resp.data.error, id)
+                        const kbbuaww = `➸ *Title* : ${resp.data.result.title}\n➸ *Harga* : ${resp.data.result.harga}\n➸ *Spesifikasi* : ${resp.data.result.spesifikasi}\n➸ *Kelebihan* : ${resp.data.result.kelebihan}\n➸ *Kekurangan* : ${resp.data.result.kekurangan}`
+                        aksa.sendFileFromUrl(dari, resp.data.result.image, 'gsm.jpg', kbbuaww, id)
+                    } catch (err) {
+                        console.error(err.message)
+                        await aksa.sendFileFromUrl(dari, errorurl2, 'error.png', '💔️ Maaf, tidak ditemukan')
+                        aksa.sendText(ownerNumber, 'Mobil Error : ' + err)
+                    }
+                    break
+                    //words
+                case `lucya`:
+                case `luu`:
+                case `lucyaa`:
+                case `lulu`:
+                case `luluu`:
+                    let blsn = jwb[Math.floor(Math.random() * jwb.length)]
+                    aksa.reply(dari, blsn, id)
+                    break
+                case `assalamualaikum`:
+                case `asalamualaikum`:
+                case `assalamu\'alaikum`:
+                    if (args.length === 1) return aksa.reply(dari, `Waalaikumsalam ${pushname}:)`)
+                    break
+                case `${prefix}hitung`:
+                    if (!isRegis) return aksa.reply(dari, `Maaf ${pushname}, sepertinya kamu belum terdaftar sebagai user Lucya, untuk pendaftaran bisa menggunakan *!regis* |nama|no hp. Contoh: !regis |${pushname}|${serial.replace(/@c.us/g,'')}`, id)
+                    if (args.length === 1) return aksa.reply(dari, '[❗] Kirim perintah *!hitung [ Angka ]*\nContoh : !hitung 12*12\n*NOTE* :\n- Untuk Perkalian Menggunakan *\n- Untuk Pertambahan Menggunakan +\n- Untuk Pengurangan Mennggunakan -\n- Untuk Pembagian Menggunakan /')
+                    const mtk = body.slice(8)
+                    if (typeof Math_js.evaluate(mtk) !== "number") {
+                        aksa.reply(dari, `"${mtk}", bukan angka!\n[❗] Kirim perintah *!hitung [ Angka ]*\nContoh : !hitung 12*12\n*NOTE* :\n- Untuk Perkalian Menggunakan *\n- Untuk Pertambahan Menggunakan +\n- Untuk Pengurangan Mennggunakan -\n- Untuk Pembagian Menggunakan /`, id)
+                    } else {
+                        aksa.reply(dari, `*「 MATH 」*\n\n*Kalkulator*\n${mtk} = ${Math_js.evaluate(mtk)}`, id)
+                    }
+                    break
+                case `p`:
+                case `helo`:
+                case `hai`:
+                case `halo`:
+                case `bot`:
+                case `hi`:
+                case `hallo`:
+                case `wey`:
+                case `woy`:
+                    if (args.length === 1) return aksa.reply(dari, `Hai, *${pushname}!*👋
 Terima kasih telah menghubungi. Ketik *!help* untuk melihat perintah yang tersedia. 
         
 Jangan lupa follow ya!🍻
 Instagram: https://instagram.com/bdrsmsdn 
 Twitter: https://twitter.com/bdrsmsdn`)
-                break
-            case `iri?`:
-            case `iri`:
-                aksa.sendPtt(dari, './media/iri.mp3', id)
-                break
-            case `abgjago`:
-            case `abangjago`:
-                aksa.sendPtt(dari, './media/bgjg.mp3', id)
-                break
-            case `tarekses`:
-            case `tariksis`:
-            case `tareksis`:
-            case `tareeksis`:
-            case `tareekses`:
-                aksa.sendPtt(dari, './media/tarekses.mp3', id)
-                break
-            case `welotka`:
-            case `welutka`:
-            case `kangcopet`:
-                aksa.sendPtt(dari, './media/welot.mp3', id)
-                break
-                //information
-            case `${prefix}cuaca`:
-                if (!isRegis) return aksa.reply(dari, `Maaf ${pushname}, sepertinya kamu belum terdaftar sebagai user Lucya, untuk pendaftaran bisa menggunakan *!regis* |nama|no hp. Contoh: !regis |${pushname}|${serial.replace(/@c.us/g,'')}`, id)
-                if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik !limit Untuk Mengecek Kuota Limit Kamu`, id)
+                    break
+                case `iri?`:
+                case `iri`:
+                    aksa.sendPtt(dari, './media/iri.mp3', id)
+                    break
+                case `abgjago`:
+                case `abangjago`:
+                    aksa.sendPtt(dari, './media/bgjg.mp3', id)
+                    break
+                case `tarekses`:
+                case `tariksis`:
+                case `tareksis`:
+                case `tareeksis`:
+                case `tareekses`:
+                    aksa.sendPtt(dari, './media/tarekses.mp3', id)
+                    break
+                case `welotka`:
+                case `welutka`:
+                case `kangcopet`:
+                    aksa.sendPtt(dari, './media/welot.mp3', id)
+                    break
+                    //information
+                case `${prefix}cuaca`:
+                    if (!isRegis) return aksa.reply(dari, `Maaf ${pushname}, sepertinya kamu belum terdaftar sebagai user Lucya, untuk pendaftaran bisa menggunakan *!regis* |nama|no hp. Contoh: !regis |${pushname}|${serial.replace(/@c.us/g,'')}`, id)
+                    if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik !limit Untuk Mengecek Kuota Limit Kamu`, id)
 
-                await limitAdd(serial)
-                if (args.length === 1) return aksa.reply(dari, 'Kirim perintah *!cuaca [tempat]*\nContoh : *!cuaca tangerang', id)
-                const tempat = body.slice(7)
-                const weather = await get.get(`https://mhankbarbars.herokuapp.com/api/cuaca?q=${tempat}&apiKey=${apiKey}`).json()
-                if (weather.error) {
-                    aksa.reply(dari, weather.error, id)
-                } else {
-                    aksa.reply(dari, `➸ Tempat : ${weather.result.tempat}\n\n➸ Angin : ${weather.result.angin}\n➸ Cuaca : ${weather.result.cuaca}\n➸ Deskripsi : ${weather.result.desk}\n➸ Kelembapan : ${weather.result.kelembapan}\n➸ Suhu : ${weather.result.suhu}\n➸ Udara : ${weather.result.udara}`, id)
-                }
-                break
-            case `${prefix}infogempa`:
-                if (!isRegis) return aksa.reply(dari, `Maaf ${pushname}, sepertinya kamu belum terdaftar sebagai user Lucya, untuk pendaftaran bisa menggunakan *!regis* |nama|no hp. Contoh: !regis |${pushname}|${serial.replace(/@c.us/g,'')}`, id)
-                if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik #limit Untuk Mengecek Kuota Limit Kamu`, id)
-
-                await limitAdd(serial)
-                const bmkg = await axios.get('http://aksa-api.herokuapp.com/api/infogempa')
-                const {
-                    potensi, koordinat, lokasi, kedalaman, magnitude, waktu, map
-                } = bmkg.data
-                const hasil = `*${waktu}*\n📍 *Lokasi* : *${lokasi}*\n〽️ *Kedalaman* : *${kedalaman}*\n💢 *Magnitude* : *${magnitude}*\n🔘 *Potensi* : *${potensi}*\n📍 *Koordinat* : *${koordinat}*`
-                aksa.sendFileFromUrl(dari, map, 'shakemap.jpg', hasil, id)
-                break
-            case `${prefix}listdaerah`:
-                if (!isRegis) return aksa.reply(dari, `Maaf ${pushname}, sepertinya kamu belum terdaftar sebagai user Lucya, untuk pendaftaran bisa menggunakan *!regis* |nama|no hp. Contoh: !regis |${pushname}|${serial.replace(/@c.us/g,'')}`, id)
-                const listDaerah = await get('https://mhankbarbars.herokuapp.com/daerah').json()
-                aksa.reply(dari, listDaerah.result, id)
-                break
-                //contact
-            case `${prefix}creator`:
-            case `${prefix}admin`:
-            case `${prefix}owner`:
-                if (!isRegis) return aksa.reply(dari, `Maaf ${pushname}, sepertinya kamu belum terdaftar sebagai user Lucya, untuk pendaftaran bisa menggunakan *!regis* |nama|no hp. Contoh: !regis |${pushname}|${serial.replace(/@c.us/g,'')}`, id)
-                aksa.sendContact(dari, '6281281817375@c.us') //ganti
-                break
-            case `${prefix}bot1`:
-                if (!isRegis) return aksa.reply(dari, `Maaf ${pushname}, sepertinya kamu belum terdaftar sebagai user Lucya, untuk pendaftaran bisa menggunakan *!regis* |nama|no hp. Contoh: !regis |${pushname}|${serial.replace(/@c.us/g,'')}`, id)
-                aksa.sendContact(dari, '6282115089860@c.us') //bot gue ini
-                break
-            case `${prefix}bot2`:
-                if (!isRegis) return aksa.reply(dari, `Maaf ${pushname}, sepertinya kamu belum terdaftar sebagai user Lucya, untuk pendaftaran bisa menggunakan *!regis* |nama|no hp. Contoh: !regis |${pushname}|${serial.replace(/@c.us/g,'')}`, id)
-                aksa.sendContact(dari, '6285215130891@c.us') //ini juga
-                break
-            case `${prefix}bugreport`:
-                if (!isRegis) return aksa.reply(dari, `Maaf ${pushname}, sepertinya kamu belum terdaftar sebagai user Lucya, untuk pendaftaran bisa menggunakan *!regis* |nama|no hp. Contoh: !regis |${pushname}|${serial.replace(/@c.us/g,'')}`, id)
-                if (args.length === 1) return aksa.reply(dari, '[❗] Kirim perintah !bugreport [teks]\ncontoh : !bugreport Permisi Owner, Ada bug pada command !otakudesu, Tolong diperbaiki')
-                const bug = body.slice(11)
-                if (isGroupMsg) {
-                    aksa.sendText(ownerNumber, `*[BUG REPORT]*\n*WAKTU* : ${time}\n*Nama Pengirim* : ${pushname}\n*Group* : ${formattedTitle}\n\n${bug}`)
-                    aksa.reply(dari, 'Masalah telah di laporkan ke owner Lucya, laporan palsu/main2 tidak akan ditanggapi.', id)
-                } else {
-                    aksa.sendText(ownerNumber, `*[BUG REPORT]*\n*WAKTU* : ${time}\n*Nama Pengirim* : ${pushname}\n\n${bug}`)
-                    aksa.reply(dari, 'Masalah telah di laporkan ke owner Lucya, laporan palsu/main2 tidak akan ditanggapi.', id)
-                }
-                break
-            case `${prefix}restart`: // WORK IF YOU RUN USING PM2
-                if (isOwner) {
-                    aksa.sendText(dari, '*[WARN]* Restarting ...')
-                    setting.restartState = true
-                    setting.restartId = chatId
-                    var obj = []
-                    //fs.writeFileSync('./lib/setting.json', JSON.stringify(obj, null,2));
-                    fs.writeFileSync('./lib/limit.json', JSON.stringify(obj));
-                    fs.writeFileSync('./lib/muted.json', JSON.stringify(obj));
-                    fs.writeFileSync('./lib/msgLimit.json', JSON.stringify(obj));
-                    fs.writeFileSync('./lib/banned.json', JSON.stringify(obj));
-                    fs.writeFileSync('./lib/welcome.json', JSON.stringify(obj));
-                    fs.writeFileSync('./lib/left.json', JSON.stringify(obj));
-                    fs.writeFileSync('./lib/Simsimi.json', JSON.stringify(obj));
-                    fs.writeFileSync('./lib/nsfwz.json', JSON.stringify(obj));
-                    const spawn = require('child_process').exec;
-
-                    function os_func() {
-                        this.execCommand = function (command) {
-                            return new Promise((resolve, reject) => {
-                                spawn(command, (error, stdout, stderr) => {
-                                    if (error) {
-                                        reject(error);
-                                        return;
-                                    }
-                                    resolve(stdout)
-                                });
-                            })
-                        }
+                    await limitAdd(serial)
+                    if (args.length === 1) return aksa.reply(dari, 'Kirim perintah *!cuaca [tempat]*\nContoh : *!cuaca tangerang', id)
+                    const tempat = body.slice(7)
+                    const weather = await get.get(`https://mhankbarbars.herokuapp.com/api/cuaca?q=${tempat}&apiKey=${apiKey}`).json()
+                    if (weather.error) {
+                        aksa.reply(dari, weather.error, id)
+                    } else {
+                        aksa.reply(dari, `➸ Tempat : ${weather.result.tempat}\n\n➸ Angin : ${weather.result.angin}\n➸ Cuaca : ${weather.result.cuaca}\n➸ Deskripsi : ${weather.result.desk}\n➸ Kelembapan : ${weather.result.kelembapan}\n➸ Suhu : ${weather.result.suhu}\n➸ Udara : ${weather.result.udara}`, id)
                     }
-                    var oz = new os_func();
-                    oz.execCommand('pm2 restart index').then(res => {}).catch(err => {
-                        console.log("os >>>", err);
-                    })
-                }
-                break
-            case `${prefix}lucyagroup`:
-                aksa.reply(dari, `➥ *Grup Official Informasi Lucya-BOT I* https://chat.whatsapp.com/LuZkEtgJz4kI6cOkAeHL5j
+                    break
+                case `${prefix}infogempa`:
+                    if (!isRegis) return aksa.reply(dari, `Maaf ${pushname}, sepertinya kamu belum terdaftar sebagai user Lucya, untuk pendaftaran bisa menggunakan *!regis* |nama|no hp. Contoh: !regis |${pushname}|${serial.replace(/@c.us/g,'')}`, id)
+                    if (isLimit(serial)) return aksa.reply(dari, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik #limit Untuk Mengecek Kuota Limit Kamu`, id)
+
+                    await limitAdd(serial)
+                    const bmkg = await axios.get('http://aksa-api.herokuapp.com/api/infogempa')
+                    const {
+                        potensi, koordinat, lokasi, kedalaman, magnitude, waktu, map
+                    } = bmkg.data
+                    const hasil = `*${waktu}*\n📍 *Lokasi* : *${lokasi}*\n〽️ *Kedalaman* : *${kedalaman}*\n💢 *Magnitude* : *${magnitude}*\n🔘 *Potensi* : *${potensi}*\n📍 *Koordinat* : *${koordinat}*`
+                    aksa.sendFileFromUrl(dari, map, 'shakemap.jpg', hasil, id)
+                    break
+                case `${prefix}listdaerah`:
+                    if (!isRegis) return aksa.reply(dari, `Maaf ${pushname}, sepertinya kamu belum terdaftar sebagai user Lucya, untuk pendaftaran bisa menggunakan *!regis* |nama|no hp. Contoh: !regis |${pushname}|${serial.replace(/@c.us/g,'')}`, id)
+                    const listDaerah = await get('https://mhankbarbars.herokuapp.com/daerah').json()
+                    aksa.reply(dari, listDaerah.result, id)
+                    break
+                    //contact
+                case `${prefix}creator`:
+                case `${prefix}admin`:
+                case `${prefix}owner`:
+                    if (!isRegis) return aksa.reply(dari, `Maaf ${pushname}, sepertinya kamu belum terdaftar sebagai user Lucya, untuk pendaftaran bisa menggunakan *!regis* |nama|no hp. Contoh: !regis |${pushname}|${serial.replace(/@c.us/g,'')}`, id)
+                    aksa.sendContact(dari, '6281281817375@c.us') //ganti
+                    break
+                case `${prefix}bot1`:
+                    if (!isRegis) return aksa.reply(dari, `Maaf ${pushname}, sepertinya kamu belum terdaftar sebagai user Lucya, untuk pendaftaran bisa menggunakan *!regis* |nama|no hp. Contoh: !regis |${pushname}|${serial.replace(/@c.us/g,'')}`, id)
+                    aksa.sendContact(dari, '6282115089860@c.us') //bot gue ini
+                    break
+                case `${prefix}bot2`:
+                    if (!isRegis) return aksa.reply(dari, `Maaf ${pushname}, sepertinya kamu belum terdaftar sebagai user Lucya, untuk pendaftaran bisa menggunakan *!regis* |nama|no hp. Contoh: !regis |${pushname}|${serial.replace(/@c.us/g,'')}`, id)
+                    aksa.sendContact(dari, '6285215130891@c.us') //ini juga
+                    break
+                case `${prefix}bugreport`:
+                    if (!isRegis) return aksa.reply(dari, `Maaf ${pushname}, sepertinya kamu belum terdaftar sebagai user Lucya, untuk pendaftaran bisa menggunakan *!regis* |nama|no hp. Contoh: !regis |${pushname}|${serial.replace(/@c.us/g,'')}`, id)
+                    if (args.length === 1) return aksa.reply(dari, '[❗] Kirim perintah !bugreport [teks]\ncontoh : !bugreport Permisi Owner, Ada bug pada command !otakudesu, Tolong diperbaiki')
+                    const bug = body.slice(11)
+                    if (isGroupMsg) {
+                        aksa.sendText(ownerNumber, `*[BUG REPORT]*\n*WAKTU* : ${time}\n*Nama Pengirim* : ${pushname}\n*Group* : ${formattedTitle}\n\n${bug}`)
+                        aksa.reply(dari, 'Masalah telah di laporkan ke owner Lucya, laporan palsu/main2 tidak akan ditanggapi.', id)
+                    } else {
+                        aksa.sendText(ownerNumber, `*[BUG REPORT]*\n*WAKTU* : ${time}\n*Nama Pengirim* : ${pushname}\n\n${bug}`)
+                        aksa.reply(dari, 'Masalah telah di laporkan ke owner Lucya, laporan palsu/main2 tidak akan ditanggapi.', id)
+                    }
+                    break
+                case `${prefix}restart`: // WORK IF YOU RUN USING PM2
+                    if (isOwner) {
+                        aksa.sendText(dari, '*[WARN]* Restarting ...')
+                        setting.restartState = true
+                        setting.restartId = chatId
+                        var obj = []
+                        //fs.writeFileSync('./lib/setting.json', JSON.stringify(obj, null,2));
+                        fs.writeFileSync('./lib/limit.json', JSON.stringify(obj));
+                        fs.writeFileSync('./lib/muted.json', JSON.stringify(obj));
+                        fs.writeFileSync('./lib/msgLimit.json', JSON.stringify(obj));
+                        fs.writeFileSync('./lib/banned.json', JSON.stringify(obj));
+                        fs.writeFileSync('./lib/welcome.json', JSON.stringify(obj));
+                        fs.writeFileSync('./lib/left.json', JSON.stringify(obj));
+                        fs.writeFileSync('./lib/Simsimi.json', JSON.stringify(obj));
+                        fs.writeFileSync('./lib/nsfwz.json', JSON.stringify(obj));
+                        const spawn = require('child_process').exec;
+
+                        function os_func() {
+                            this.execCommand = function (command) {
+                                return new Promise((resolve, reject) => {
+                                    spawn(command, (error, stdout, stderr) => {
+                                        if (error) {
+                                            reject(error);
+                                            return;
+                                        }
+                                        resolve(stdout)
+                                    });
+                                })
+                            }
+                        }
+                        var oz = new os_func();
+                        oz.execCommand('pm2 restart index').then(res => {}).catch(err => {
+                            console.log("os >>>", err);
+                        })
+                    }
+                    break
+                case `${prefix}lucyagroup`:
+                    aksa.reply(dari, `➥ *Grup Official Informasi Lucya-BOT I* https://chat.whatsapp.com/LuZkEtgJz4kI6cOkAeHL5j
 ➥ *Grup Official Informasi Lucya-BOT II* https://chat.whatsapp.com/G0MEd2wMcJhKupMqrWI6fB`, id)
-                break
-            default:
-                if (command.startsWith(`${prefix}`)) {
-                    aksa.reply(dari, `Maaf ${pushname}, Command *${args[0]}* Tidak Terdaftar Di Dalam *${prefix}menu*!`, id)
-                }
-                //await aksa.sendSeen(from) 
+                    break
+                default:
+                    if (command.startsWith(`${prefix}`)) {
+                        aksa.reply(dari, `Maaf ${pushname}, Command *${args[0]}* Tidak Terdaftar Di Dalam *${prefix}menu*!`, id)
+                    }
+                    //await aksa.sendSeen(from) 
             }
         }
     } catch (err) {
