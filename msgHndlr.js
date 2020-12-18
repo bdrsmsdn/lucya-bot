@@ -4451,11 +4451,11 @@ ${Object.keys(me.phone).map(key => `${key} : ${me.phone[key]}`).join('\n')}`.sli
                     if (args[1] == undefined || args[2] == undefined) return
                     if (args.length >= 2) {
                         var codelang = args[1]
-                        var text = body.slice(11 + codelang.length);
-                        translatte(text, {
+                        var texty = body.slice(11 + codelang.length);
+                        translatte(texty, {
                             to: codelang
                         }).then(res => {
-                            aksa.sendText(dari, res.text);
+                            aksa.sendText(dari, res.texty);
                         }).catch(err => {
                             aksa.sendText(dari, `[ERROR] Teks tidak ada, atau kode bahasa ${codelang} tidak support\n~> *!bahasa* untuk melihat list kode bahasa`);
                         });
