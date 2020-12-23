@@ -1461,6 +1461,23 @@ ${Object.keys(me.phone).map(key => `${key} : ${me.phone[key]}`).join('\n')}`.sli
                         aksa.reply(dari, 'Error!', id)
                     }
                     break
+                case `${prefix}findsticker`:
+                case `${prefix}findstiker`:
+                    if (!isRegis) return tobz.reply(from, `Maaf ${pushname}, sepertinya kamu belum terdaftar sebagai user Lucya, untuk pendaftaran bisa menggunakan *!regis* |nama|no hp. Contoh: !regis |${pushname}|${serial.replace(/@c.us/g,'')}`, id)
+                    if (!isAdmin) return tobz.reply(from, 'Mohon maaf anda tidak bisa menggunakan fitur premium!', id)
+                    if (args.length === 1) return tobz.reply(from, `Kirim perintah *${prefix}findsticker namastiker*\nContoh : *${prefix}findsticker pentol*`, id)
+                    await tobz.reply(from, mess.wait, id)
+                    try {
+                        const s = await axios.get('https://api.vhtear.com/wasticker?query=' + body.slice(13) + `&apikey=${vhtear}`)
+                        for (let i = 0; i < s.data.result.data.length; i++) {
+                        await tobz.sendStickerfromUrl(from, s.data.result.data[i])
+                        }
+                    } catch (err) {
+                        console.error(err.message)
+                        await tobz.sendFileFromUrl(from, errorurl2, 'error.png', '💔️ Maaf, terjadi kesalahan! atau kata kunci yang dicari tidak ditemukan')
+                        tobz.sendText(ownerNumber, 'Find Sticker Error : ' + err)
+                    }
+                    break
                 case `${prefix}nhentai`:
                     //premium command, lu tau kemana harus ngehubungi
                     break
