@@ -207,8 +207,8 @@ after running it you need to scan the qr
 |       ✅        |   Getses                      |
 |       ✅        |   Banchat                      |
 |       ✅        |   Maintenance                      |
-|       ✅        |   Add Admin Sasha                      |
-|       ✅        |   Del Admin Sasha                      |
+|       ✅        |   Add Premium                      |
+|       ✅        |   Del Premium                      |
 |       ✅        |   Block                      |
 |       ✅        |   Unblock                      |
 |       ✅        |   Join Group                      |

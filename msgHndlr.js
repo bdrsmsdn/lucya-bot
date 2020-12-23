@@ -3815,7 +3815,8 @@ ${Object.keys(me.phone).map(key => `${key} : ${me.phone[key]}`).join('\n')}`.sli
                     break
                 case `${prefix}remove`: //menghapus nomor from database
                     if (!isOwner) return aksa.reply(dari, 'Fitur ini hanya dapat digunakan oleh Owner Lucya')
-                    if (args.length === 1) return aksa.reply(dari, 'Masukkan nomornya, *GUNAKAN AWALAN 62* contoh: 6281281817375') {
+                    if (args.length === 1) return aksa.reply(dari, 'Masukkan nomornya, *GUNAKAN AWALAN 62* contoh: 6281281817375') 
+                    {
                         let inx = pengirim.indexOf(args[1] + '@c.us')
                         pengirim.splice(inx, 1)
                         fs.writeFileSync('./lib/user.json', JSON.stringify(pengirim))
